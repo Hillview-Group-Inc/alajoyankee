@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sign in to your Alajo Yankee account." />
+  <title>Sign In | Alajo Yankee</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231a6b3c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='Georgia' font-weight='800'>A</text></svg>" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/forms.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+<div class="page-loader" id="pageLoader"><div class="loader-ring"></div></div>
+<div id="toast-container" aria-live="polite"></div>
+
+<nav class="navbar" id="navbar" style="background:white;box-shadow:0 1px 0 var(--color-border);">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">A</div>Alajo Yankee</a>
+    <div class="nav-links">
+      <span style="color:var(--color-text-muted);font-size:.9rem;">New to Alajo Yankee?</span>
+      <a href="signup.html" class="btn btn-primary btn-sm">Create Account</a>
+    </div>
+  </div>
+</nav>
+
+<main class="auth-page">
+  <div aria-hidden="true" style="position:fixed;top:0;left:0;width:50%;height:100vh;background:linear-gradient(225deg,var(--color-primary-subtle),transparent);pointer-events:none;z-index:0;"></div>
+
+  <div class="auth-card" style="position:relative;z-index:1;">
+    <div class="auth-header">
+      <a href="index.html" class="auth-logo">
+        <div class="nav-logo-icon" style="width:52px;height:52px;font-size:1.4rem;border-radius:14px;">A</div>
+      </a>
+      <h2>Welcome Back</h2>
+      <p>Sign in to your Alajo Yankee account.</p>
+    </div>
+
+    <div id="signinAlert" style="margin-bottom:20px;display:none;" role="alert"></div>
+
+    <form id="signinForm" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address <span class="required">*</span></label>
+        <div class="input-group">
+          <span class="input-icon">✉️</span>
+          <input type="email" id="email" name="email" class="form-control" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+        <span class="form-error" id="email-error" style="display:none;"></span>
+      </div>
+
+      <div class="form-group">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <label class="form-label" for="password" style="margin-bottom:0;">Password <span class="required">*</span></label>
+          <a href="#" style="font-size:.82rem;color:var(--color-primary);">Forgot password?</a>
+        </div>
+        <div class="input-group">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password" />
+          <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">👁</button>
+        </div>
+        <span class="form-error" id="password-error" style="display:none;"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="check-group">
+          <input type="checkbox" id="rememberMe" name="rememberMe" />
+          <span>Keep me signed in</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" id="signinBtn">
+        <span id="signinBtnText">Sign In</span>
+      </button>
+    </form>
+
+    <div class="auth-divider">or</div>
+
+    <div style="text-align:center;padding:12px;background:var(--color-bg-alt);border-radius:var(--radius-md);font-size:.88rem;color:var(--color-text-muted);">
+      <strong style="color:var(--color-text);">Demo Account</strong><br/>
+      Email: <code>demo@alajoyankee.com</code> · Password: <code>Demo@1234</code>
+    </div>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="signup.html">Sign up free</a>
+    </div>
+  </div>
+</main>
+
+<script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+/* ============================================
+   server/routes/auth.js
+   POST /api/auth/register
+   POST /api/auth/login
+   ============================================ */
+
+'use strict';
+
+const express  = require('express');
+const { body } = require('express-validator');
+const { register, login } = require('../controllers/authController');
+
+const router = express.Router();
+
+/* ── Validation rules ── */
+const registerRules = [
+  body('firstName')
+    .trim()
+    .notEmpty().withMessage('First name is required.')
+    .isLength({ max: 100 }).withMessage('First name must be 100 characters or fewer.'),
+
+  body('lastName')
+    .trim()
+    .notEmpty().withMessage('Last name is required.')
+    .isLength({ max: 100 }).withMessage('Last name must be 100 characters or fewer.'),
+
+  body('email')
+    .trim()
+    .isEmail().withMessage('A valid email address is required.')
+    .isLength({ max: 255 }).withMessage('Email must be 255 characters or fewer.')
+    .normalizeEmail(),
+
+  body('password')
+    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters.')
+    .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter.')
+    .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter.')
+    .matches(/[0-9]/).withMessage('Password must contain at least one number.')
+    .isLength({ max: 128 }).withMessage('Password must be 128 characters or fewer.'),
+];
+
+const loginRules = [
+  body('email')
+    .trim()
+    .isEmail().withMessage('A valid email address is required.')
+    .normalizeEmail(),
+
+  body('password')
+    .notEmpty().withMessage('Password is required.'),
+];
+
+/* ── Routes ── */
+router.post('/register', registerRules, register);
+router.post('/login',    loginRules,    login);
+
+module.exports = router;

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Alajo Yankee Services – Community savings circles, financial education, digital tools, and consulting." />
+  <title>Services | Alajo Yankee</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231a6b3c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='Georgia' font-weight='800'>A</text></svg>" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/forms.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+<div class="page-loader" id="pageLoader"><div class="loader-ring"></div></div>
+<div id="toast-container" aria-live="polite"></div>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">A</div>Alajo Yankee</a>
+    <div class="nav-links">
+      <a href="index.html"    class="nav-link">Home</a>
+      <a href="about.html"    class="nav-link">About</a>
+      <a href="services.html" class="nav-link active">Services</a>
+      <a href="contact.html"  class="nav-link">Contact</a>
+      <div class="nav-cta flex gap-sm">
+        <a href="signin.html" class="btn btn-outline btn-sm">Sign In</a>
+        <a href="signup.html" class="btn btn-primary btn-sm">Get Started</a>
+      </div>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navDrawer" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-drawer" id="navDrawer">
+  <a href="index.html"    class="nav-link">Home</a>
+  <a href="about.html"    class="nav-link">About</a>
+  <a href="services.html" class="nav-link active">Services</a>
+  <a href="contact.html"  class="nav-link">Contact</a>
+  <div class="nav-cta flex flex-col gap-sm" style="margin-top:8px;">
+    <a href="signin.html" class="btn btn-outline">Sign In</a>
+    <a href="signup.html" class="btn btn-primary">Get Started</a>
+  </div>
+</div>
+
+<div class="page-hero">
+  <div class="container">
+    <span class="section-label gold" style="margin-bottom:16px;display:inline-block;">What We Offer</span>
+    <h1>Our Services</h1>
+    <p>Comprehensive solutions for community financial empowerment — from traditional savings circles to modern digital tools.</p>
+  </div>
+</div>
+
+<!-- CORE SERVICES -->
+<section style="background:white;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Core Offerings</span>
+      <h2>Everything Your Community Needs</h2>
+      <p>We've built a full suite of services designed to honor tradition while embracing modern financial best practices.</p>
+    </div>
+    <div class="grid-2">
+      <!-- Service 1 -->
+      <div class="card service-card" style="display:flex;flex-direction:column;gap:20px;">
+        <div>
+          <div class="card-icon" style="font-size:2rem;width:64px;height:64px;margin-bottom:24px;">🤝</div>
+          <h3 style="margin-bottom:12px;">Community Savings Circles</h3>
+          <p style="margin-bottom:16px;">Join or create a rotating savings group (Ajo/Susu) with full digital management. Our platform handles contribution tracking, reminders, payout scheduling, and transparent records — so your group can focus on community, not administration.</p>
+          <ul style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-primary);font-weight:700;flex-shrink:0;">✓</span> Automated contribution reminders
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-primary);font-weight:700;flex-shrink:0;">✓</span> Transparent real-time ledger
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-primary);font-weight:700;flex-shrink:0;">✓</span> Customizable payout schedules
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-primary);font-weight:700;flex-shrink:0;">✓</span> Group communication tools
+            </li>
+          </ul>
+        </div>
+        <a href="signup.html" class="btn btn-primary" style="align-self:flex-start;">Start a Savings Circle</a>
+      </div>
+      <!-- Service 2 -->
+      <div class="card service-card" style="display:flex;flex-direction:column;gap:20px;">
+        <div>
+          <div class="card-icon gold" style="font-size:2rem;width:64px;height:64px;margin-bottom:24px;">📚</div>
+          <h3 style="margin-bottom:12px;">Financial Education & Training</h3>
+          <p style="margin-bottom:16px;">Knowledge is wealth. Our education programs are designed for the African diaspora — covering budgeting, credit building, homeownership, investing, and intergenerational wealth building, all through a culturally resonant lens.</p>
+          <ul style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-secondary-dark);font-weight:700;flex-shrink:0;">✓</span> Monthly workshops & webinars
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-secondary-dark);font-weight:700;flex-shrink:0;">✓</span> On-demand resource library
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-secondary-dark);font-weight:700;flex-shrink:0;">✓</span> 1-on-1 financial coaching
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-secondary-dark);font-weight:700;flex-shrink:0;">✓</span> Community forums & peer support
+            </li>
+          </ul>
+        </div>
+        <a href="contact.html" class="btn btn-secondary" style="align-self:flex-start;">Explore Programs</a>
+      </div>
+      <!-- Service 3 -->
+      <div class="card service-card" style="display:flex;flex-direction:column;gap:20px;">
+        <div>
+          <div class="card-icon accent" style="font-size:2rem;width:64px;height:64px;margin-bottom:24px;">💡</div>
+          <h3 style="margin-bottom:12px;">Digital Tools & Platform Access</h3>
+          <p style="margin-bottom:16px;">Our secure, modern web platform gives you everything you need to run a savings group like a pro. Member dashboards, contribution history, payout tracking, document storage, and group messaging — all in one place.</p>
+          <ul style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-accent);font-weight:700;flex-shrink:0;">✓</span> Personal member dashboard
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-accent);font-weight:700;flex-shrink:0;">✓</span> Mobile-responsive design
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-accent);font-weight:700;flex-shrink:0;">✓</span> Secure JWT authentication
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-accent);font-weight:700;flex-shrink:0;">✓</span> Encrypted data storage
+            </li>
+          </ul>
+        </div>
+        <a href="signup.html" class="btn btn-outline" style="align-self:flex-start;">Access the Platform</a>
+      </div>
+      <!-- Service 4 -->
+      <div class="card service-card" style="display:flex;flex-direction:column;gap:20px;">
+        <div>
+          <div class="card-icon" style="font-size:2rem;width:64px;height:64px;margin-bottom:24px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);">🏢</div>
+          <h3 style="margin-bottom:12px;">Consulting & Community Setup</h3>
+          <p style="margin-bottom:16px;">Already have a savings group but need help formalizing it? Our consulting team will help you establish bylaws, accountability structures, dispute resolution processes, and digital onboarding — turning an informal group into a trusted institution.</p>
+          <ul style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-primary);font-weight:700;flex-shrink:0;">✓</span> Group structure & governance
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-primary);font-weight:700;flex-shrink:0;">✓</span> Legal & compliance guidance
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-primary);font-weight:700;flex-shrink:0;">✓</span> Digital migration & onboarding
+            </li>
+            <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);">
+              <span style="color:var(--color-primary);font-weight:700;flex-shrink:0;">✓</span> Ongoing advisory support
+            </li>
+          </ul>
+        </div>
+        <a href="contact.html" class="btn btn-primary" style="align-self:flex-start;">Book a Consultation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING / TIERS -->
+<section style="background:var(--color-bg-alt);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label gold">Simple Pricing</span>
+      <h2>Plans for Every Community</h2>
+      <p>No hidden fees. No surprises. Just transparent pricing that puts your community first.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card text-center" style="padding:44px 36px;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🌱</div>
+        <h3 style="margin-bottom:6px;">Starter</h3>
+        <p style="font-size:.9rem;margin-bottom:24px;">For small groups getting started</p>
+        <div style="font-family:var(--font-display);font-size:3rem;font-weight:800;color:var(--color-primary);line-height:1;margin-bottom:4px;">Free</div>
+        <p style="font-size:.85rem;margin-bottom:32px;color:var(--color-text-light);">Always free, up to 10 members</p>
+        <ul style="text-align:left;display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Up to 10 members</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Basic savings circle</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Email reminders</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Contribution ledger</li>
+        </ul>
+        <a href="signup.html" class="btn btn-outline" style="width:100%;justify-content:center;">Get Started Free</a>
+      </div>
+      <div class="card text-center" style="padding:44px 36px;border:2px solid var(--color-primary);position:relative;">
+        <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--color-primary);color:white;font-size:.75rem;font-weight:700;padding:4px 16px;border-radius:var(--radius-pill);white-space:nowrap;letter-spacing:.06em;">MOST POPULAR</div>
+        <div style="font-size:2.5rem;margin-bottom:12px;">🌳</div>
+        <h3 style="margin-bottom:6px;">Community</h3>
+        <p style="font-size:.9rem;margin-bottom:24px;">For established savings groups</p>
+        <div style="font-family:var(--font-display);font-size:3rem;font-weight:800;color:var(--color-primary);line-height:1;margin-bottom:4px;">$9<span style="font-size:1.4rem;font-weight:500;">/mo</span></div>
+        <p style="font-size:.85rem;margin-bottom:32px;color:var(--color-text-light);">Per group, up to 50 members</p>
+        <ul style="text-align:left;display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Up to 50 members</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Multiple savings circles</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> SMS + Email reminders</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Financial education access</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Priority support</li>
+        </ul>
+        <a href="signup.html" class="btn btn-primary" style="width:100%;justify-content:center;">Start Community Plan</a>
+      </div>
+      <div class="card text-center" style="padding:44px 36px;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🌐</div>
+        <h3 style="margin-bottom:6px;">Enterprise</h3>
+        <p style="font-size:.9rem;margin-bottom:24px;">For organizations & associations</p>
+        <div style="font-family:var(--font-display);font-size:3rem;font-weight:800;color:var(--color-primary);line-height:1;margin-bottom:4px;">Custom</div>
+        <p style="font-size:.85rem;margin-bottom:32px;color:var(--color-text-light);">Unlimited members, full features</p>
+        <ul style="text-align:left;display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Unlimited members</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> White-label option</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Dedicated account manager</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> Custom integrations</li>
+          <li style="display:flex;gap:10px;font-size:.9rem;color:var(--color-text-muted);"><span style="color:var(--color-success);">✓</span> SLA & compliance support</li>
+        </ul>
+        <a href="contact.html" class="btn btn-outline" style="width:100%;justify-content:center;">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container" style="position:relative;z-index:1;">
+    <h2 style="max-width:580px;margin:0 auto 16px;">Ready to Get Started?</h2>
+    <p style="max-width:480px;margin:0 auto 40px;">Join thousands of families building wealth through community savings. Create your free account today.</p>
+    <div class="cta-buttons">
+      <a href="signup.html" class="btn btn-secondary btn-xl">Create Free Account</a>
+      <a href="contact.html" class="btn btn-outline-white btn-xl">Talk to Our Team</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo"><div class="nav-logo-icon">A</div>Alajo Yankee</a>
+        <p>Building community wealth through trusted African savings traditions — modernized for the diaspora.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn" aria-label="Facebook">f</a>
+          <a href="#" class="social-btn" aria-label="Twitter/X">𝕏</a>
+          <a href="#" class="social-btn" aria-label="Instagram">📷</a>
+          <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+        </div>
+      </div>
+      <div class="footer-col"><h5>Platform</h5><div class="footer-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="services.html">Services</a><a href="contact.html">Contact</a></div></div>
+      <div class="footer-col"><h5>Account</h5><div class="footer-links"><a href="signup.html">Create Account</a><a href="signin.html">Sign In</a><a href="dashboard.html">Dashboard</a></div></div>
+      <div class="footer-col"><h5>Legal</h5><div class="footer-links"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Security</a></div></div>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,.08);">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>&copy; <span id="year"></span> Alajo Yankee. All rights reserved.</span>
+        <span>Made with ❤️ for the African diaspora community</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

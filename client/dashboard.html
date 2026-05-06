@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Dashboard | Alajo Yankee</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231a6b3c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='Georgia' font-weight='800'>A</text></svg>" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/forms.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+<div class="page-loader" id="pageLoader"><div class="loader-ring"></div></div>
+<div id="toast-container" aria-live="polite"></div>
+
+<div class="dashboard-layout" id="dashboardLayout" style="display:none;">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html" class="nav-logo" style="color:white;">
+        <div class="nav-logo-icon">A</div>Alajo Yankee
+      </a>
+    </div>
+    <nav class="sidebar-nav" aria-label="Dashboard navigation">
+      <a href="#" class="sidebar-link active" data-panel="overview">
+        <span class="icon">📊</span> Overview
+      </a>
+      <a href="#" class="sidebar-link" data-panel="profile">
+        <span class="icon">👤</span> My Profile
+      </a>
+      <a href="#" class="sidebar-link" data-panel="messages">
+        <span class="icon">✉️</span> Messages
+      </a>
+      <a href="#" class="sidebar-link" data-panel="savings">
+        <span class="icon">💰</span> My Savings
+      </a>
+      <a href="services.html" class="sidebar-link">
+        <span class="icon">🛠</span> Services
+      </a>
+      <a href="contact.html" class="sidebar-link">
+        <span class="icon">📞</span> Support
+      </a>
+      <div style="margin-top:auto;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);margin-top:32px;">
+        <button class="sidebar-link" id="logoutBtn" style="width:100%;text-align:left;cursor:pointer;">
+          <span class="icon">🚪</span> Sign Out
+        </button>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="dashboard-main">
+
+    <!-- OVERVIEW PANEL -->
+    <div id="panel-overview">
+      <div class="dashboard-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+          <div>
+            <h1 id="welcomeMsg">Welcome back! 👋</h1>
+            <p style="color:var(--color-text-muted);">Here's what's happening in your community today.</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1rem;" id="userAvatar">?</div>
+            <div>
+              <div style="font-weight:600;font-size:.95rem;" id="userDisplayName">Loading...</div>
+              <div style="font-size:.8rem;color:var(--color-text-muted);" id="userEmailDisplay"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-cards">
+        <div class="dash-card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div style="width:40px;height:40px;border-radius:var(--radius-md);background:var(--color-primary-subtle);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">💰</div>
+            <span style="font-size:.85rem;color:var(--color-text-muted);font-weight:500;">Total Saved</span>
+          </div>
+          <div class="dash-card-value">$4,800</div>
+          <div class="dash-card-label">↑ 12% this month</div>
+        </div>
+        <div class="dash-card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div style="width:40px;height:40px;border-radius:var(--radius-md);background:var(--color-secondary-subtle);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🤝</div>
+            <span style="font-size:.85rem;color:var(--color-text-muted);font-weight:500;">Active Groups</span>
+          </div>
+          <div class="dash-card-value" style="color:var(--color-secondary-dark);">2</div>
+          <div class="dash-card-label">1 pending invitation</div>
+        </div>
+        <div class="dash-card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#fef2f2;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">📅</div>
+            <span style="font-size:.85rem;color:var(--color-text-muted);font-weight:500;">Next Contribution</span>
+          </div>
+          <div class="dash-card-value" style="color:var(--color-accent);">$500</div>
+          <div class="dash-card-label">Due in 8 days</div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div style="background:white;border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+          <h3 style="font-size:1.2rem;">Recent Activity</h3>
+          <span class="badge badge-green">Live</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Group</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:var(--color-text-muted);font-size:.85rem;">Mar 1, 2025</td>
+              <td>Monthly Contribution</td>
+              <td>Houston Ajo Circle</td>
+              <td style="color:var(--color-error);font-weight:600;">-$500</td>
+              <td><span class="badge badge-green">✓ Confirmed</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--color-text-muted);font-size:.85rem;">Feb 15, 2025</td>
+              <td>Payout Received</td>
+              <td>Houston Ajo Circle</td>
+              <td style="color:var(--color-success);font-weight:600;">+$3,000</td>
+              <td><span class="badge badge-green">✓ Confirmed</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--color-text-muted);font-size:.85rem;">Feb 1, 2025</td>
+              <td>Monthly Contribution</td>
+              <td>Houston Ajo Circle</td>
+              <td style="color:var(--color-error);font-weight:600;">-$500</td>
+              <td><span class="badge badge-green">✓ Confirmed</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--color-text-muted);font-size:.85rem;">Jan 20, 2025</td>
+              <td>New Group Joined</td>
+              <td>Tech Diaspora Savers</td>
+              <td style="color:var(--color-text-muted);">—</td>
+              <td><span class="badge badge-gold">Active</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PROFILE PANEL -->
+    <div id="panel-profile" style="display:none;">
+      <div class="dashboard-header">
+        <h1>My Profile</h1>
+        <p style="color:var(--color-text-muted);">Manage your personal information and account settings.</p>
+      </div>
+      <div style="background:white;border-radius:var(--radius-lg);padding:40px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);max-width:600px;">
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:36px;padding-bottom:32px;border-bottom:1px solid var(--color-border);">
+          <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1.6rem;" id="profileAvatar">?</div>
+          <div>
+            <h3 id="profileName">Loading...</h3>
+            <p style="font-size:.9rem;margin-bottom:8px;" id="profileEmail"></p>
+            <span class="badge badge-green">✓ Verified Member</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div>
+            <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:6px;">First Name</div>
+            <div style="font-weight:500;" id="profileFirst">—</div>
+          </div>
+          <div>
+            <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:6px;">Last Name</div>
+            <div style="font-weight:500;" id="profileLast">—</div>
+          </div>
+          <div style="grid-column:1/-1;">
+            <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:6px;">Email Address</div>
+            <div style="font-weight:500;" id="profileEmailFull">—</div>
+          </div>
+          <div style="grid-column:1/-1;">
+            <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:6px;">Member Since</div>
+            <div style="font-weight:500;" id="profileJoined">—</div>
+          </div>
+        </div>
+        <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--color-border);">
+          <button class="btn btn-outline" onclick="showToast('Profile editing coming soon!','info')">Edit Profile</button>
+          <button class="btn btn-ghost" style="margin-left:8px;color:var(--color-error);" onclick="document.getElementById('logoutBtn').click()">Sign Out</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGES PANEL -->
+    <div id="panel-messages" style="display:none;">
+      <div class="dashboard-header">
+        <h1>Contact Messages</h1>
+        <p style="color:var(--color-text-muted);">Messages submitted through the contact form.</p>
+      </div>
+      <div style="background:white;border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);">
+        <div id="messagesContainer">
+          <div style="text-align:center;padding:48px 24px;color:var(--color-text-muted);">
+            <div style="font-size:3rem;margin-bottom:16px;">📭</div>
+            <p>Loading messages...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAVINGS PANEL -->
+    <div id="panel-savings" style="display:none;">
+      <div class="dashboard-header">
+        <h1>My Savings</h1>
+        <p style="color:var(--color-text-muted);">Track your contributions and group progress.</p>
+      </div>
+      <div class="grid-2" style="margin-bottom:32px;">
+        <div style="background:linear-gradient(135deg,var(--color-primary-dark),var(--color-primary-light));border-radius:var(--radius-lg);padding:32px;color:white;">
+          <div style="font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;opacity:.75;margin-bottom:12px;">Houston Ajo Circle</div>
+          <div style="font-family:var(--font-display);font-size:2.4rem;font-weight:800;margin-bottom:8px;">$4,800</div>
+          <div style="opacity:.8;font-size:.9rem;margin-bottom:20px;">Your total contribution this cycle</div>
+          <div style="background:rgba(255,255,255,.15);border-radius:var(--radius-md);padding:12px 16px;display:flex;justify-content:space-between;">
+            <span style="font-size:.85rem;opacity:.8;">12 members</span>
+            <span style="font-size:.85rem;font-weight:600;">$500/month</span>
+          </div>
+        </div>
+        <div style="background:linear-gradient(135deg,var(--color-secondary-dark),var(--color-secondary-light));border-radius:var(--radius-lg);padding:32px;color:white;">
+          <div style="font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;opacity:.75;margin-bottom:12px;">Tech Diaspora Savers</div>
+          <div style="font-family:var(--font-display);font-size:2.4rem;font-weight:800;margin-bottom:8px;">$1,200</div>
+          <div style="opacity:.8;font-size:.9rem;margin-bottom:20px;">Your total contribution this cycle</div>
+          <div style="background:rgba(255,255,255,.15);border-radius:var(--radius-md);padding:12px 16px;display:flex;justify-content:space-between;">
+            <span style="font-size:.85rem;opacity:.8;">8 members</span>
+            <span style="font-size:.85rem;font-weight:600;">$300/month</span>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:16px;">🚀</div>
+        <h3 style="margin-bottom:12px;">Start a New Savings Circle</h3>
+        <p style="margin-bottom:24px;">Invite your friends, family, or community members to save together.</p>
+        <a href="contact.html" class="btn btn-primary">Request Group Setup</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

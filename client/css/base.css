@@ -1,0 +1,130 @@
+/* ============================================
+   BASE.CSS — Variables, Reset, Typography
+   Alajo Yankee · Modern SaaS Rebuild
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ── Color Palette (extracted & modernized from original) ── */
+:root {
+  /* Primary — Deep Forest Green */
+  --color-primary:        #1a6b3c;
+  --color-primary-dark:   #134f2d;
+  --color-primary-light:  #249152;
+  --color-primary-subtle: #e8f5ee;
+
+  /* Secondary — Warm Amber/Gold */
+  --color-secondary:      #d4a017;
+  --color-secondary-dark: #b8880e;
+  --color-secondary-light:#f0c040;
+  --color-secondary-subtle:#fdf6e3;
+
+  /* Accent — Deep Earth */
+  --color-accent:         #8b3a1e;
+  --color-accent-light:   #c0522a;
+
+  /* Backgrounds */
+  --color-bg:             #fafaf8;
+  --color-bg-alt:         #f4f4f0;
+  --color-bg-dark:        #0f3d22;
+  --color-bg-card:        #ffffff;
+
+  /* Text */
+  --color-text:           #1c1c1c;
+  --color-text-muted:     #6b7280;
+  --color-text-light:     #9ca3af;
+  --color-text-inverse:   #ffffff;
+
+  /* UI */
+  --color-border:         #e5e7eb;
+  --color-border-focus:   var(--color-primary);
+  --color-error:          #dc2626;
+  --color-success:        #16a34a;
+  --color-warning:        #d97706;
+
+  /* Shadows */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:   0 4px 16px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.05);
+  --shadow-lg:   0 12px 40px rgba(0,0,0,.10), 0 4px 12px rgba(0,0,0,.06);
+  --shadow-xl:   0 24px 64px rgba(0,0,0,.12), 0 8px 24px rgba(0,0,0,.08);
+  --shadow-glow: 0 0 0 3px rgba(26,107,60,.18);
+
+  /* Typography */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+
+  /* Sizing */
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  20px;
+  --radius-xl:  32px;
+  --radius-pill:9999px;
+
+  /* Transitions */
+  --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Spacing */
+  --section-padding: 96px 0;
+  --container-max:   1200px;
+  --container-pad:   clamp(20px, 5vw, 64px);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img, video { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, textarea, select { font-family: inherit; font-size: inherit; }
+
+/* ── Typography Scale ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 800; }
+h2 { font-size: clamp(1.9rem, 4vw, 3rem);   font-weight: 700; }
+h3 { font-size: clamp(1.3rem, 2.5vw, 1.75rem); font-weight: 600; }
+h4 { font-size: 1.25rem; font-weight: 600; }
+h5 { font-size: 1.1rem;  font-weight: 600; }
+h6 { font-size: 1rem;    font-weight: 600; }
+
+p  { line-height: 1.7; color: var(--color-text-muted); }
+
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-secondary); }
+.text-accent { color: var(--color-accent); }
+.text-muted { color: var(--color-text-muted); }
+
+/* ── Utility ── */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}
+.text-center { text-align: center; }
+.fw-bold { font-weight: 700; }
+
+/* ── Selection ── */
+::selection { background: var(--color-primary); color: #fff; }
+::-moz-selection { background: var(--color-primary); color: #fff; }
