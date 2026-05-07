@@ -43,6 +43,10 @@
   addBlurValidation('firstName', v => Validate.notEmpty(v) ? '' : 'First name is required');
   addBlurValidation('lastName',  v => Validate.notEmpty(v) ? '' : 'Last name is required');
   addBlurValidation('email',     v => Validate.email(v)    ? '' : 'Please enter a valid email address');
+  addBlurValidation('phone',     v => {
+    if (!Validate.notEmpty(v)) return 'Phone number is required';
+    return Validate.phone(v) ? '' : 'Please enter a valid phone number';
+  });
   addBlurValidation('password',  v => {
     if (!Validate.notEmpty(v)) return 'Password is required';
     const { score } = Validate.passwordStrength(v);
@@ -70,6 +74,7 @@
       firstName:       form.firstName.value.trim(),
       lastName:        form.lastName.value.trim(),
       email:           form.email.value.trim().toLowerCase(),
+      phone:           form.phone.value.trim(),
       password:        form.password.value,
     };
 
@@ -101,6 +106,11 @@
     }
     if (!Validate.email(form.email.value)) {
       fieldError('email', 'Please enter a valid email address'); valid = false;
+    }
+    if (!Validate.notEmpty(form.phone.value)) {
+      fieldError('phone', 'Phone number is required'); valid = false;
+    } else if (!Validate.phone(form.phone.value)) {
+      fieldError('phone', 'Please enter a valid phone number'); valid = false;
     }
     const { score } = Validate.passwordStrength(form.password.value);
     if (!form.password.value || score < 3) {
@@ -199,19 +209,4 @@ function addBlurValidation(fieldId, validateFn) {
   input.addEventListener('input', () => clearFieldError(fieldId));
 }
 
-function showAlert(el, type, message) {
-  if (!el) return;
-  const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
-  el.className = `alert alert-${type}`;
-  el.innerHTML = `<span class="alert-icon">${icons[type]||''}</span><span>${message}</span>`;
-  el.style.display = 'flex';
-  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function hideAlert(el) {
-  if (el) el.style.display = 'none';
-}
-
-window.setupToggle   = setupToggle;
-window.showAlert     = showAlert;
-window.hideAlert     = hideAlert;
+window.setupToggle = setupToggle;

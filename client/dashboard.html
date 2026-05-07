@@ -38,6 +38,15 @@
       <a href="#" class="sidebar-link" data-panel="savings">
         <span class="icon">💰</span> My Savings
       </a>
+      <a href="join-pool.html" class="sidebar-link">
+        <span class="icon">➕</span> Join a Pool
+      </a>
+      <a href="payments.html" class="sidebar-link">
+        <span class="icon">💳</span> Payments
+      </a>
+      <a href="#" class="sidebar-link admin-only" data-panel="admin" style="display:none;">
+        <span class="icon">⚙️</span> Admin
+      </a>
       <a href="services.html" class="sidebar-link">
         <span class="icon">🛠</span> Services
       </a>
@@ -64,6 +73,19 @@
             <p style="color:var(--color-text-muted);">Here's what's happening in your community today.</p>
           </div>
           <div style="display:flex;align-items:center;gap:12px;">
+            <!-- Notification bell -->
+            <div style="position:relative;" id="notifWrap">
+              <button id="notifBtn" aria-label="Notifications" style="background:white;border:1px solid var(--color-border);border-radius:10px;padding:9px 12px;cursor:pointer;font-size:1.1rem;position:relative;">
+                🔔
+                <span id="notifBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--color-error);color:white;border-radius:999px;font-size:.65rem;font-weight:700;padding:2px 6px;">0</span>
+              </button>
+              <div id="notifDropdown" style="display:none;position:absolute;top:48px;right:0;width:340px;max-height:420px;overflow-y:auto;background:white;border:1px solid var(--color-border);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);z-index:60;">
+                <div style="padding:14px 16px;border-bottom:1px solid var(--color-border);font-weight:600;">Notifications</div>
+                <div id="notifList" style="padding:8px 0;">
+                  <div style="text-align:center;padding:24px;color:var(--color-text-muted);font-size:.9rem;">Loading…</div>
+                </div>
+              </div>
+            </div>
             <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1rem;" id="userAvatar">?</div>
             <div>
               <div style="font-weight:600;font-size:.95rem;" id="userDisplayName">Loading...</div>
@@ -79,24 +101,24 @@
             <div style="width:40px;height:40px;border-radius:var(--radius-md);background:var(--color-primary-subtle);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">💰</div>
             <span style="font-size:.85rem;color:var(--color-text-muted);font-weight:500;">Total Saved</span>
           </div>
-          <div class="dash-card-value">$4,800</div>
-          <div class="dash-card-label">↑ 12% this month</div>
+          <div class="dash-card-value" id="statTotalSaved">—</div>
+          <div class="dash-card-label" id="statTotalSavedLabel">Verified contributions</div>
         </div>
         <div class="dash-card">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
             <div style="width:40px;height:40px;border-radius:var(--radius-md);background:var(--color-secondary-subtle);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🤝</div>
             <span style="font-size:.85rem;color:var(--color-text-muted);font-weight:500;">Active Groups</span>
           </div>
-          <div class="dash-card-value" style="color:var(--color-secondary-dark);">2</div>
-          <div class="dash-card-label">1 pending invitation</div>
+          <div class="dash-card-value" style="color:var(--color-secondary-dark);" id="statActiveGroups">—</div>
+          <div class="dash-card-label" id="statActiveGroupsLabel">Pools you're enrolled in</div>
         </div>
         <div class="dash-card">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
             <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#fef2f2;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">📅</div>
             <span style="font-size:.85rem;color:var(--color-text-muted);font-weight:500;">Next Contribution</span>
           </div>
-          <div class="dash-card-value" style="color:var(--color-accent);">$500</div>
-          <div class="dash-card-label">Due in 8 days</div>
+          <div class="dash-card-value" style="color:var(--color-accent);" id="statNextAmount">—</div>
+          <div class="dash-card-label" id="statNextDate">No upcoming contribution</div>
         </div>
       </div>
 
@@ -104,49 +126,14 @@
       <div style="background:white;border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
           <h3 style="font-size:1.2rem;">Recent Activity</h3>
-          <span class="badge badge-green">Live</span>
+          <a href="join-pool.html" class="btn btn-outline btn-sm">+ Join Pool</a>
         </div>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Description</th>
-              <th>Group</th>
-              <th>Amount</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="color:var(--color-text-muted);font-size:.85rem;">Mar 1, 2025</td>
-              <td>Monthly Contribution</td>
-              <td>Houston Ajo Circle</td>
-              <td style="color:var(--color-error);font-weight:600;">-$500</td>
-              <td><span class="badge badge-green">✓ Confirmed</span></td>
-            </tr>
-            <tr>
-              <td style="color:var(--color-text-muted);font-size:.85rem;">Feb 15, 2025</td>
-              <td>Payout Received</td>
-              <td>Houston Ajo Circle</td>
-              <td style="color:var(--color-success);font-weight:600;">+$3,000</td>
-              <td><span class="badge badge-green">✓ Confirmed</span></td>
-            </tr>
-            <tr>
-              <td style="color:var(--color-text-muted);font-size:.85rem;">Feb 1, 2025</td>
-              <td>Monthly Contribution</td>
-              <td>Houston Ajo Circle</td>
-              <td style="color:var(--color-error);font-weight:600;">-$500</td>
-              <td><span class="badge badge-green">✓ Confirmed</span></td>
-            </tr>
-            <tr>
-              <td style="color:var(--color-text-muted);font-size:.85rem;">Jan 20, 2025</td>
-              <td>New Group Joined</td>
-              <td>Tech Diaspora Savers</td>
-              <td style="color:var(--color-text-muted);">—</td>
-              <td><span class="badge badge-gold">Active</span></td>
-            </tr>
-          </tbody>
-        </table>
+        <div id="upcomingContainer">
+          <div style="text-align:center;padding:32px 16px;color:var(--color-text-muted);">
+            <div class="loader-ring" style="margin:0 auto 12px;"></div>
+            Loading...
+          </div>
+        </div>
       </div>
     </div>
 
@@ -212,31 +199,91 @@
         <h1>My Savings</h1>
         <p style="color:var(--color-text-muted);">Track your contributions and group progress.</p>
       </div>
-      <div class="grid-2" style="margin-bottom:32px;">
-        <div style="background:linear-gradient(135deg,var(--color-primary-dark),var(--color-primary-light));border-radius:var(--radius-lg);padding:32px;color:white;">
-          <div style="font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;opacity:.75;margin-bottom:12px;">Houston Ajo Circle</div>
-          <div style="font-family:var(--font-display);font-size:2.4rem;font-weight:800;margin-bottom:8px;">$4,800</div>
-          <div style="opacity:.8;font-size:.9rem;margin-bottom:20px;">Your total contribution this cycle</div>
-          <div style="background:rgba(255,255,255,.15);border-radius:var(--radius-md);padding:12px 16px;display:flex;justify-content:space-between;">
-            <span style="font-size:.85rem;opacity:.8;">12 members</span>
-            <span style="font-size:.85rem;font-weight:600;">$500/month</span>
-          </div>
-        </div>
-        <div style="background:linear-gradient(135deg,var(--color-secondary-dark),var(--color-secondary-light));border-radius:var(--radius-lg);padding:32px;color:white;">
-          <div style="font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;opacity:.75;margin-bottom:12px;">Tech Diaspora Savers</div>
-          <div style="font-family:var(--font-display);font-size:2.4rem;font-weight:800;margin-bottom:8px;">$1,200</div>
-          <div style="opacity:.8;font-size:.9rem;margin-bottom:20px;">Your total contribution this cycle</div>
-          <div style="background:rgba(255,255,255,.15);border-radius:var(--radius-md);padding:12px 16px;display:flex;justify-content:space-between;">
-            <span style="font-size:.85rem;opacity:.8;">8 members</span>
-            <span style="font-size:.85rem;font-weight:600;">$300/month</span>
-          </div>
+      <div id="savingsPoolsContainer" class="grid-2" style="margin-bottom:32px;">
+        <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--color-text-muted);">
+          <div class="loader-ring" style="margin:0 auto 12px;"></div>
+          Loading your pools...
         </div>
       </div>
       <div style="background:white;border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);text-align:center;padding:48px 24px;">
         <div style="font-size:3rem;margin-bottom:16px;">🚀</div>
-        <h3 style="margin-bottom:12px;">Start a New Savings Circle</h3>
-        <p style="margin-bottom:24px;">Invite your friends, family, or community members to save together.</p>
-        <a href="contact.html" class="btn btn-primary">Request Group Setup</a>
+        <h3 style="margin-bottom:12px;">Join a New Pool</h3>
+        <p style="margin-bottom:24px;">Pick a pool size, schedule, and amount — we'll match you with an open pool or start a new one.</p>
+        <a href="join-pool.html" class="btn btn-primary">Browse Pools</a>
+      </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="panel-admin" style="display:none;">
+      <div class="dashboard-header">
+        <h1>Admin Console</h1>
+        <p style="color:var(--color-text-muted);">Manage configurations, monitor pools, and verify payments.</p>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm admin-tab active" data-tab="payments">Pending Payments</button>
+        <button class="btn btn-outline btn-sm admin-tab"        data-tab="pools">All Pools</button>
+        <button class="btn btn-outline btn-sm admin-tab"        data-tab="rotations">All Rotations</button>
+        <button class="btn btn-outline btn-sm admin-tab"        data-tab="config">Configuration</button>
+      </div>
+
+      <!-- Pending payments -->
+      <div id="admin-payments" class="admin-tab-pane">
+        <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);">
+          <h3 style="margin-bottom:12px;">Pending Payments</h3>
+          <div id="adminPaymentsContainer">Loading...</div>
+        </div>
+      </div>
+
+      <!-- All pools -->
+      <div id="admin-pools" class="admin-tab-pane" style="display:none;">
+        <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);">
+          <h3 style="margin-bottom:12px;">All Pools</h3>
+          <div id="adminPoolsContainer">Loading...</div>
+        </div>
+      </div>
+
+      <!-- All rotations -->
+      <div id="admin-rotations" class="admin-tab-pane" style="display:none;">
+        <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);">
+          <h3 style="margin-bottom:12px;">All Rotations</h3>
+          <div id="adminRotationsContainer">Loading...</div>
+        </div>
+      </div>
+
+      <!-- Configuration -->
+      <div id="admin-config" class="admin-tab-pane" style="display:none;">
+        <div class="grid-2" style="gap:24px;">
+          <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);">
+            <h3 style="margin-bottom:12px;">Pool Sizes</h3>
+            <div id="cfgPoolSizesList" style="margin-bottom:16px;">Loading...</div>
+            <form id="cfgPoolSizeForm" style="display:flex;gap:8px;flex-wrap:wrap;">
+              <input type="text"   class="form-control" name="name"  placeholder="Name (e.g. Mini Circle)" required style="flex:1;min-width:160px;" />
+              <input type="number" class="form-control" name="value" placeholder="Members" min="2" required style="width:120px;" />
+              <button class="btn btn-primary btn-sm">Add</button>
+            </form>
+          </div>
+
+          <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);">
+            <h3 style="margin-bottom:12px;">Rotation Schedules</h3>
+            <div id="cfgSchedulesList" style="margin-bottom:16px;">Loading...</div>
+            <form id="cfgScheduleForm" style="display:flex;gap:8px;flex-wrap:wrap;">
+              <input type="text"   class="form-control" name="name"        placeholder="Name (e.g. Quarterly)" required style="flex:1;min-width:160px;" />
+              <input type="number" class="form-control" name="valueInDays" placeholder="Days" min="1" required style="width:120px;" />
+              <button class="btn btn-primary btn-sm">Add</button>
+            </form>
+          </div>
+
+          <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);grid-column:1/-1;">
+            <h3 style="margin-bottom:12px;">Contribution Amounts</h3>
+            <div id="cfgAmountsList" style="margin-bottom:16px;">Loading...</div>
+            <form id="cfgAmountForm" style="display:flex;gap:8px;flex-wrap:wrap;max-width:400px;">
+              <input type="number" class="form-control" name="amount" placeholder="Amount in USD" min="1" step="0.01" required style="flex:1;" />
+              <button class="btn btn-primary btn-sm">Add</button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -245,5 +292,6 @@
 
 <script src="js/main.js"></script>
 <script src="js/dashboard.js"></script>
+<script src="js/admin.js"></script>
 </body>
 </html>

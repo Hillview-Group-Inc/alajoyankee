@@ -190,6 +190,21 @@ async function apiRequest(endpoint, options = {}) {
 window.apiRequest = apiRequest;
 
 /* ════════════════════════════════════════════
+   ALERT HELPERS (inline alert boxes)
+   ════════════════════════════════════════════ */
+function showAlert(el, type, message) {
+  if (!el) return;
+  const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+  el.className = `alert alert-${type}`;
+  el.innerHTML = `<span class="alert-icon">${icons[type] || ''}</span><span>${message}</span>`;
+  el.style.display = 'flex';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function hideAlert(el) { if (el) el.style.display = 'none'; }
+window.showAlert = showAlert;
+window.hideAlert = hideAlert;
+
+/* ════════════════════════════════════════════
    AUTH HELPERS
    ════════════════════════════════════════════ */
 const Auth = {

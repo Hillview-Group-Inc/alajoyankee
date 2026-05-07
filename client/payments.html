@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Payments | Alajo Yankee</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231a6b3c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='Georgia' font-weight='800'>A</text></svg>" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/forms.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+<div class="page-loader" id="pageLoader"><div class="loader-ring"></div></div>
+<div id="toast-container" aria-live="polite"></div>
+
+<nav class="navbar scrolled" id="navbar" style="background:white;box-shadow:0 1px 0 var(--color-border);">
+  <div class="nav-inner">
+    <a href="dashboard.html" class="nav-logo"><div class="nav-logo-icon">A</div>Alajo Yankee</a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="btn btn-outline btn-sm">← Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<main class="auth-page" style="padding-top:120px;align-items:flex-start;">
+  <div style="max-width:880px;margin:0 auto;width:100%;padding:0 16px;">
+
+    <!-- Summary -->
+    <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);margin-bottom:24px;">
+      <div class="grid-2" style="gap:16px;">
+        <div>
+          <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:4px;">Total Verified</div>
+          <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;color:var(--color-success);" id="payTotalVerified">—</div>
+        </div>
+        <div>
+          <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:4px;">Total Pending</div>
+          <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;color:var(--color-secondary-dark);" id="payTotalPending">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Due now -->
+    <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);margin-bottom:24px;">
+      <h3 style="margin-bottom:6px;">Contributions to Pay</h3>
+      <p style="color:var(--color-text-muted);font-size:.9rem;margin-bottom:16px;">Submit a payment for any contribution that's due. An admin will verify it before it counts.</p>
+      <div id="dueContainer">Loading...</div>
+    </div>
+
+    <!-- History -->
+    <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);">
+      <h3 style="margin-bottom:6px;">Payment History</h3>
+      <p style="color:var(--color-text-muted);font-size:.9rem;margin-bottom:16px;">Every payment you've submitted, with current verification status.</p>
+      <div id="historyContainer">Loading...</div>
+    </div>
+  </div>
+</main>
+
+<script src="js/main.js"></script>
+<script src="js/payments.js"></script>
+</body>
+</html>

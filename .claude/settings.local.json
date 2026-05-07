@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"new Function\\(require\\('fs'\\).readFileSync\\('client/js/dashboard.js','utf8'\\)\\); console.log\\('dashboard.js OK'\\);\")",
+      "Bash(node -e \"new Function\\(require\\('fs'\\).readFileSync\\('client/js/join-pool.js','utf8'\\)\\); console.log\\('join-pool.js OK'\\);\")",
+      "Bash(node -e \"new Function\\(require\\('fs'\\).readFileSync\\('client/js/auth.js','utf8'\\)\\); console.log\\('auth.js OK'\\);\")",
+      "Bash(node -e \"new Function\\(require\\('fs'\\).readFileSync\\('client/js/main.js','utf8'\\)\\); console.log\\('main.js OK'\\);\")",
+      "Bash(npm install *)",
+      "Bash(node -e 'new Function\\(require\\('\\\\''fs'\\\\''\\).readFileSync\\('\\\\''__TRACKED_VAR__'\\\\'','\\\\''utf8'\\\\''\\)\\)')",
+      "Bash(node -e ' *)"
+    ]
+  }
+}

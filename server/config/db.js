@@ -53,4 +53,32 @@ async function query(sqlStr, params = {}) {
   return req.query(sqlStr);
 }
 
-module.exports = { sql, getPool, query };
+// Per-transaction query helper — use inside a withTransaction callback
+async function txQuery(tx, sqlStr, params = {}) {
+  const req = new sql.Request(tx);
+  for (const [key, { type, value }] of Object.entries(params)) {
+    req.input(key, type, value);
+  }
+  return req.query(sqlStr);
+}
+
+/**
+ * Run `fn(tx)` inside a SERIALIZABLE transaction.
+ * Commits on success, rolls back on any thrown error.
+ * The callback receives the active sql.Transaction — pass it to txQuery.
+ */
+async function withTransaction(fn) {
+  const p = await getPool();
+  const tx = new sql.Transaction(p);
+  await tx.begin(sql.ISOLATION_LEVEL.SERIALIZABLE);
+  try {
+    const result = await fn(tx);
+    await tx.commit();
+    return result;
+  } catch (err) {
+    try { await tx.rollback(); } catch (_) { /* already rolled back */ }
+    throw err;
+  }
+}
+
+module.exports = { sql, getPool, query, txQuery, withTransaction };
