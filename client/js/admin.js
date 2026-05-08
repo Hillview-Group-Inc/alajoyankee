@@ -52,7 +52,7 @@
       wrap.innerHTML = `
         <table class="data-table">
           <thead><tr>
-            <th>Submitted</th><th>Member</th><th>Pool</th><th>Amount</th><th>Action</th>
+            <th>Submitted</th><th>Payer</th><th>Pool</th><th>Paid to</th><th>Amount</th><th>Action</th>
           </tr></thead>
           <tbody>
             ${payments.map(p => `
@@ -63,6 +63,7 @@
                   <div style="font-size:.78rem;color:var(--color-text-muted);">${escHtml(p.Email)}</div>
                 </td>
                 <td>${escHtml(p.PoolSizeName)}<br><span style="font-size:.78rem;color:var(--color-text-muted);">${escHtml(p.RotationName)}</span></td>
+                <td>${escHtml(p.RecipientName || '—')}</td>
                 <td style="font-weight:600;">${fmt$(p.Amount)}</td>
                 <td>
                   <button class="btn btn-primary btn-sm" data-action="verify" data-pid="${p.PaymentID}">Verify</button>

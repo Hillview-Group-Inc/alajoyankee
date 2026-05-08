@@ -16,9 +16,9 @@ const { submit, getMine, getPending, verify } = require('../controllers/paymentC
 const router = express.Router();
 
 const submitRules = [
-  body('rotationDetailID')
-    .exists().withMessage('rotationDetailID is required.')
-    .isInt({ min: 1 }).withMessage('rotationDetailID is invalid.'),
+  body('rotationDetailContributionID')
+    .exists().withMessage('rotationDetailContributionID is required.')
+    .isInt({ min: 1 }).withMessage('rotationDetailContributionID is invalid.'),
   body('amount')
     .exists().withMessage('amount is required.')
     .isFloat({ gt: 0 }).withMessage('amount must be greater than zero.'),

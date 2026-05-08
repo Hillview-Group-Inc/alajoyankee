@@ -1,406 +1,888 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Alajo Yankee – Building community powered by trusted African principles of contributions and savings. Join thousands growing wealth together." />
-  <title>Alajo Yankee | Community Savings & Contributions</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231a6b3c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='Georgia' font-weight='800'>A</text></svg>" />
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/forms.css" />
-  <link rel="stylesheet" href="css/responsive.css" />
-</head>
-<body>
-
-<!-- Page Loader -->
-<div class="page-loader" id="pageLoader">
-  <div class="loader-ring"></div>
-</div>
-
-<!-- Toast Container -->
-<div id="toast-container" aria-live="polite"></div>
-
-<!-- ══════════ NAVBAR ══════════ -->
-<nav class="navbar hero-mode" id="navbar" role="navigation" aria-label="Main navigation">
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo" aria-label="Alajo Yankee Home">
-      <div class="nav-logo-icon" aria-hidden="true">A</div>
-      Alajo Yankee
-    </a>
-    <div class="nav-links" role="menubar">
-      <a href="index.html"    class="nav-link active" role="menuitem">Home</a>
-      <a href="about.html"    class="nav-link" role="menuitem">About</a>
-      <a href="services.html" class="nav-link" role="menuitem">Services</a>
-      <a href="contact.html"  class="nav-link" role="menuitem">Contact</a>
-      <div class="nav-cta flex gap-sm">
-        <a href="signin.html"  class="btn btn-outline-white btn-sm">Sign In</a>
-        <a href="signup.html"  class="btn btn-secondary btn-sm">Get Started</a>
-      </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Alajo Yankee – Building community powered by trusted African principles of contributions and savings. Join thousands growing wealth together."
+    />
+    <title>Alajo Yankee | Community Savings & Contributions</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231a6b3c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='Georgia' font-weight='800'>A</text></svg>"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+      <div class="loader-ring"></div>
     </div>
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navDrawer" aria-label="Toggle navigation">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
 
-<!-- Mobile Drawer -->
-<div class="nav-drawer" id="navDrawer" role="menu">
-  <a href="index.html"    class="nav-link active" role="menuitem">Home</a>
-  <a href="about.html"    class="nav-link" role="menuitem">About</a>
-  <a href="services.html" class="nav-link" role="menuitem">Services</a>
-  <a href="contact.html"  class="nav-link" role="menuitem">Contact</a>
-  <div class="nav-cta flex flex-col gap-sm" style="margin-top:8px">
-    <a href="signin.html" class="btn btn-outline">Sign In</a>
-    <a href="signup.html" class="btn btn-primary">Get Started</a>
-  </div>
-</div>
+    <!-- Toast Container -->
+    <div id="toast-container" aria-live="polite"></div>
 
-<!-- ══════════ HERO ══════════ -->
-<section class="hero-section" style="
-  min-height: 100vh;
-  background: linear-gradient(145deg, #0a2e17 0%, #134f2d 45%, #1a6b3c 100%);
-  display: flex;
-  align-items: center;
-  padding: 0;
-  position: relative;
-  overflow: hidden;
-">
-  <!-- Decorative circles -->
-  <div aria-hidden="true" style="position:absolute;top:-10%;right:-5%;width:600px;height:600px;background:radial-gradient(circle,rgba(212,160,23,.12) 0%,transparent 65%);border-radius:50%;pointer-events:none;"></div>
-  <div aria-hidden="true" style="position:absolute;bottom:-15%;left:-8%;width:500px;height:500px;background:radial-gradient(circle,rgba(26,145,82,.15) 0%,transparent 65%);border-radius:50%;pointer-events:none;"></div>
-  <div aria-hidden="true" style="position:absolute;top:20%;left:52%;width:1px;height:60%;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.06),transparent);pointer-events:none;"></div>
-
-  <div class="container" style="padding-top:100px;padding-bottom:80px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
-      <!-- Left content -->
-      <div class="hero-content" style="animation:fadeUp .7s ease both;">
-        <div style="margin-bottom:20px;">
-          <span class="badge badge-gold" style="animation:fadeUp .5s ease .1s both;opacity:0;">
-            ✦ Trusted Community Finance
-          </span>
-        </div>
-        <h1 style="color:white;margin-bottom:24px;font-size:clamp(2.4rem,4.5vw,3.6rem);line-height:1.1;">
-          Building Wealth<br/>
-          <span style="color:var(--color-secondary);">Together, Rooted</span><br/>
-          in African Wisdom
-        </h1>
-        <p style="color:rgba(255,255,255,.75);font-size:1.15rem;max-width:500px;margin-bottom:40px;line-height:1.75;">
-          Alajo Yankee empowers communities through the time-honored African tradition of collective savings and contributions — modernized for today's world.
-        </p>
-        <div class="hero-btns flex gap-md" style="flex-wrap:wrap;">
-          <a href="signup.html" class="btn btn-secondary btn-xl">
-            Get Started Free
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-          <a href="about.html" class="btn btn-outline-white btn-xl">Learn Our Story</a>
-        </div>
-        <!-- Trust indicators -->
-        <div style="display:flex;align-items:center;gap:28px;margin-top:48px;flex-wrap:wrap;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div style="display:flex;">
-              <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#d4a017,#f0c040);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.75rem;color:white;font-weight:700;margin-right:-8px;">K</div>
-              <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1a6b3c,#249152);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.75rem;color:white;font-weight:700;margin-right:-8px;">A</div>
-              <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#8b3a1e,#c0522a);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.75rem;color:white;font-weight:700;">T</div>
-            </div>
-            <span style="color:rgba(255,255,255,.7);font-size:.85rem;">1,200+ members</span>
-          </div>
-          <div style="color:rgba(255,255,255,.3);">|</div>
-          <div style="color:rgba(255,255,255,.7);font-size:.85rem;">⭐ 4.9/5 community rating</div>
-          <div style="color:rgba(255,255,255,.3);">|</div>
-          <div style="color:rgba(255,255,255,.7);font-size:.85rem;">🔒 Bank-level security</div>
-        </div>
-      </div>
-
-      <!-- Right illustration -->
-      <div class="hero-illustration" style="animation:fadeRight .8s ease .2s both;opacity:0;" aria-hidden="true">
-        <div style="background:rgba(255,255,255,.06);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:40px;position:relative;">
-          <!-- Mock savings card UI -->
-          <div style="background:linear-gradient(135deg,var(--color-secondary-dark),var(--color-secondary));border-radius:16px;padding:28px;margin-bottom:20px;box-shadow:0 8px 32px rgba(212,160,23,.3);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-              <span style="color:rgba(255,255,255,.8);font-size:.82rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Group Savings</span>
-              <span style="color:white;font-size:1.2rem;">Ajo</span>
-            </div>
-            <div style="color:white;font-family:var(--font-display);font-size:2.4rem;font-weight:800;margin-bottom:8px;">$24,500</div>
-            <div style="color:rgba(255,255,255,.75);font-size:.85rem;">Community Pool · 12 members</div>
-          </div>
-          <!-- Activity feed -->
-          <div style="display:flex;flex-direction:column;gap:12px;">
-            <div style="background:rgba(255,255,255,.08);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
-              <div style="width:36px;height:36px;border-radius:50%;background:var(--color-success);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">✓</div>
-              <div>
-                <div style="color:white;font-size:.88rem;font-weight:600;">Kwame A. contributed</div>
-                <div style="color:rgba(255,255,255,.5);font-size:.78rem;">+$500 · just now</div>
-              </div>
-              <div style="margin-left:auto;color:var(--color-secondary-light);font-weight:700;font-size:.95rem;">$500</div>
-            </div>
-            <div style="background:rgba(255,255,255,.08);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
-              <div style="width:36px;height:36px;border-radius:50%;background:var(--color-primary-light);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">✓</div>
-              <div>
-                <div style="color:white;font-size:.88rem;font-weight:600;">Amara O. received</div>
-                <div style="color:rgba(255,255,255,.5);font-size:.78rem;">Monthly payout · 2h ago</div>
-              </div>
-              <div style="margin-left:auto;color:var(--color-secondary-light);font-weight:700;font-size:.95rem;">$2,000</div>
-            </div>
-            <div style="background:rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
-              <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">⏳</div>
-              <div>
-                <div style="color:rgba(255,255,255,.7);font-size:.88rem;font-weight:600;">Next payout scheduled</div>
-                <div style="color:rgba(255,255,255,.4);font-size:.78rem;">In 14 days · Tunde B.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ STATS ══════════ -->
-<section style="padding:0;background:white;">
-  <div class="container">
-    <div class="stats-grid" style="border-radius:0;border-top:1px solid var(--color-border);">
-      <div class="stat-item">
-        <div class="stat-number">$2.4M+</div>
-        <div class="stat-label">Total Savings Pooled</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">1,200+</div>
-        <div class="stat-label">Active Members</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">98%</div>
-        <div class="stat-label">Member Satisfaction</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">15+</div>
-        <div class="stat-label">Communities Served</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ ABOUT PREVIEW ══════════ -->
-<section style="background:white;padding:96px 0;" id="about">
-  <div class="container">
-    <div class="split-section">
-      <div>
-        <span class="section-label">Our Foundation</span>
-        <h2 style="margin-bottom:20px;">Rooted in Community,<br/>Built for Today</h2>
-        <p style="margin-bottom:24px;font-size:1.05rem;">
-          Alajo Yankee draws from the West African "Susu" and "Ajo" traditions — rotating savings groups where members contribute regularly and take turns receiving the full pot. We've digitized this powerful model for diaspora communities in the United States.
-        </p>
-        <p style="margin-bottom:36px;">
-          Our platform combines cultural trust with modern financial technology, giving families and friends a secure, transparent way to save and grow wealth together — just as their ancestors did.
-        </p>
-        <div style="display:flex;flex-wrap:wrap;gap:16px;">
-          <a href="about.html" class="btn btn-primary">Our Full Story</a>
-          <a href="services.html" class="btn btn-outline">Explore Services</a>
-        </div>
-      </div>
-      <div class="split-image">
-        <div class="split-image-placeholder">🌍</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ SERVICES ══════════ -->
-<section style="background:var(--color-bg-alt);" id="services">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-label">What We Offer</span>
-      <h2>Services Built<br/>for Your Community</h2>
-      <p>From traditional savings circles to modern digital tools, we provide everything your group needs to thrive financially.</p>
-    </div>
-    <div class="grid-3">
-      <div class="card service-card">
-        <div class="card-icon">🤝</div>
-        <h3>Community Savings Circles</h3>
-        <p>Join or create rotating savings groups (Ajo/Susu) with transparent tracking, automated reminders, and secure fund management.</p>
-        <a href="services.html" class="card-cta">Learn More →</a>
-      </div>
-      <div class="card service-card">
-        <div class="card-icon gold">📚</div>
-        <h3>Financial Education</h3>
-        <p>Access workshops, webinars, and resources designed to build lasting financial literacy within diaspora communities.</p>
-        <a href="services.html" class="card-cta">Learn More →</a>
-      </div>
-      <div class="card service-card">
-        <div class="card-icon accent">💡</div>
-        <h3>Digital Tools & Platform</h3>
-        <p>Manage your group's contributions, track payouts, and communicate with members — all in one secure digital hub.</p>
-        <a href="services.html" class="card-cta">Learn More →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ FEATURES ══════════ -->
-<section style="background:white;" id="features">
-  <div class="container">
-    <div class="split-section reverse">
-      <div>
-        <span class="section-label">Why Alajo Yankee</span>
-        <h2 style="margin-bottom:32px;">The Smart Way to Save<br/>as a Community</h2>
-        <div>
-          <div class="feature-item">
-            <div class="feature-number">01</div>
-            <div>
-              <h4 style="margin-bottom:8px;">Transparent & Accountable</h4>
-              <p>Every contribution and payout is logged in real-time. Every member can see the group's full financial history.</p>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="feature-number">02</div>
-            <div>
-              <h4 style="margin-bottom:8px;">Culturally Grounded</h4>
-              <p>We honor and preserve the wisdom of African mutual aid traditions while adapting them for modern life.</p>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="feature-number">03</div>
-            <div>
-              <h4 style="margin-bottom:8px;">Bank-Level Security</h4>
-              <p>JWT authentication, encrypted data, and secure payment processing keep every member's information safe.</p>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="feature-number">04</div>
-            <div>
-              <h4 style="margin-bottom:8px;">No Hidden Fees</h4>
-              <p>What you put in is what your group gets out. Our transparent fee structure puts community first.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="split-image">
-        <div class="split-image-placeholder">📊</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ TESTIMONIALS ══════════ -->
-<section style="background:var(--color-bg-alt);" id="testimonials">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-label gold">Community Voices</span>
-      <h2>What Our Members Say</h2>
-      <p>Real stories from people who've grown their savings and strengthened their community through Alajo Yankee.</p>
-    </div>
-    <div class="grid-3">
-      <div class="card testimonial-card">
-        <div class="stars" aria-label="5 stars">★★★★★</div>
-        <p class="testimonial-text">Alajo Yankee helped my family save $15,000 over just one year. The platform is simple, and the community feeling is real. It's exactly like what my grandmother described back in Nigeria.</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">KO</div>
-          <div>
-            <div class="testimonial-name">Kemi Oduya</div>
-            <div class="testimonial-role">Member since 2022 · Houston, TX</div>
-          </div>
-        </div>
-      </div>
-      <div class="card testimonial-card">
-        <div class="stars" aria-label="5 stars">★★★★★</div>
-        <p class="testimonial-text">I started a savings group with my church friends and Alajo Yankee made it effortless. No more spreadsheets, no more confusion — just clear, honest savings for everyone.</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar" style="background:linear-gradient(135deg,var(--color-secondary-dark),var(--color-secondary));">AB</div>
-          <div>
-            <div class="testimonial-name">Abena Boateng</div>
-            <div class="testimonial-role">Group Leader · Atlanta, GA</div>
-          </div>
-        </div>
-      </div>
-      <div class="card testimonial-card">
-        <div class="stars" aria-label="5 stars">★★★★★</div>
-        <p class="testimonial-text">As a financial advisor, I recommend Alajo Yankee to my clients in the African diaspora. It builds discipline, community, and real wealth — all rooted in a tradition we should be proud of.</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar" style="background:linear-gradient(135deg,var(--color-accent),#e06030);">TI</div>
-          <div>
-            <div class="testimonial-name">Tunde Ibidun, CFP</div>
-            <div class="testimonial-role">Financial Advisor · Chicago, IL</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ CTA ══════════ -->
-<section class="cta-section">
-  <div class="container" style="position:relative;z-index:1;">
-    <span class="section-label gold" style="margin-bottom:20px;display:inline-block;">Start Today</span>
-    <h2 style="max-width:640px;margin:0 auto 16px;">Ready to Build Wealth<br/>With Your Community?</h2>
-    <p style="max-width:500px;margin:0 auto 40px;">Join over 1,200 members who are saving together, growing together, and honoring a tradition that spans generations.</p>
-    <div class="cta-buttons">
-      <a href="signup.html" class="btn btn-secondary btn-xl">Create Free Account</a>
-      <a href="contact.html" class="btn btn-outline-white btn-xl">Talk to Us</a>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ FOOTER ══════════ -->
-<footer class="footer" role="contentinfo">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="index.html" class="nav-logo">
-          <div class="nav-logo-icon">A</div>
+    <!-- ══════════ NAVBAR ══════════ -->
+    <nav
+      class="navbar hero-mode"
+      id="navbar"
+      role="navigation"
+      aria-label="Main navigation"
+    >
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo" aria-label="Alajo Yankee Home">
+          <div class="nav-logo-icon" aria-hidden="true">A</div>
           Alajo Yankee
         </a>
-        <p>Building community wealth through the trusted African tradition of collective savings and contributions — modernized for the diaspora.</p>
-        <div class="footer-social">
-          <a href="#" class="social-btn" aria-label="Facebook">f</a>
-          <a href="#" class="social-btn" aria-label="Twitter/X">𝕏</a>
-          <a href="#" class="social-btn" aria-label="Instagram">📷</a>
-          <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+        <div class="nav-links" role="menubar">
+          <a href="index.html" class="nav-link active" role="menuitem">Home</a>
+          <a href="about.html" class="nav-link" role="menuitem">About</a>
+          <a href="services.html" class="nav-link" role="menuitem">Services</a>
+          <a href="contact.html" class="nav-link" role="menuitem">Contact</a>
+          <div class="nav-cta flex gap-sm">
+            <a href="signin.html" class="btn btn-outline-white btn-sm"
+              >Sign In</a
+            >
+            <a href="signup.html" class="btn btn-secondary btn-sm"
+              >Get Started</a
+            >
+          </div>
         </div>
+        <button
+          class="nav-toggle"
+          id="navToggle"
+          aria-expanded="false"
+          aria-controls="navDrawer"
+          aria-label="Toggle navigation"
+        >
+          <span></span><span></span><span></span>
+        </button>
       </div>
-      <div class="footer-col">
-        <h5>Platform</h5>
-        <div class="footer-links">
-          <a href="index.html">Home</a>
-          <a href="about.html">About Us</a>
-          <a href="services.html">Services</a>
-          <a href="contact.html">Contact</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h5>Account</h5>
-        <div class="footer-links">
-          <a href="signup.html">Create Account</a>
-          <a href="signin.html">Sign In</a>
-          <a href="dashboard.html">Dashboard</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h5>Legal</h5>
-        <div class="footer-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Cookie Policy</a>
-          <a href="#">Security</a>
-        </div>
+    </nav>
+
+    <!-- Mobile Drawer -->
+    <div class="nav-drawer" id="navDrawer" role="menu">
+      <a href="index.html" class="nav-link active" role="menuitem">Home</a>
+      <a href="about.html" class="nav-link" role="menuitem">About</a>
+      <a href="services.html" class="nav-link" role="menuitem">Services</a>
+      <a href="contact.html" class="nav-link" role="menuitem">Contact</a>
+      <div class="nav-cta flex flex-col gap-sm" style="margin-top: 8px">
+        <a href="signin.html" class="btn btn-outline">Sign In</a>
+        <a href="signup.html" class="btn btn-primary">Get Started</a>
       </div>
     </div>
-  </div>
-  <div style="border-top:1px solid rgba(255,255,255,.08);">
-    <div class="container">
-      <div class="footer-bottom">
-        <span>&copy; <span id="year"></span> Alajo Yankee. All rights reserved.</span>
-        <span>Made with ❤️ for the African diaspora community</span>
+
+    <!-- ══════════ HERO ══════════ -->
+    <section
+      class="hero-section"
+      style="
+        min-height: 100vh;
+        background: linear-gradient(
+          145deg,
+          #0a2e17 0%,
+          #134f2d 45%,
+          #1a6b3c 100%
+        );
+        display: flex;
+        align-items: center;
+        padding: 0;
+        position: relative;
+        overflow: hidden;
+      "
+    >
+      <!-- Decorative circles -->
+      <div
+        aria-hidden="true"
+        style="
+          position: absolute;
+          top: -10%;
+          right: -5%;
+          width: 600px;
+          height: 600px;
+          background: radial-gradient(
+            circle,
+            rgba(212, 160, 23, 0.12) 0%,
+            transparent 65%
+          );
+          border-radius: 50%;
+          pointer-events: none;
+        "
+      ></div>
+      <div
+        aria-hidden="true"
+        style="
+          position: absolute;
+          bottom: -15%;
+          left: -8%;
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(
+            circle,
+            rgba(26, 145, 82, 0.15) 0%,
+            transparent 65%
+          );
+          border-radius: 50%;
+          pointer-events: none;
+        "
+      ></div>
+      <div
+        aria-hidden="true"
+        style="
+          position: absolute;
+          top: 20%;
+          left: 52%;
+          width: 1px;
+          height: 60%;
+          background: linear-gradient(
+            to bottom,
+            transparent,
+            rgba(255, 255, 255, 0.06),
+            transparent
+          );
+          pointer-events: none;
+        "
+      ></div>
+
+      <div class="container" style="padding-top: 100px; padding-bottom: 80px">
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+          "
+        >
+          <!-- Left content -->
+          <div class="hero-content" style="animation: fadeUp 0.7s ease both">
+            <div style="margin-bottom: 20px">
+              <span
+                class="badge badge-gold"
+                style="animation: fadeUp 0.5s ease 0.1s both; opacity: 0"
+              >
+                ✦ Trusted Community Finance
+              </span>
+            </div>
+            <h1
+              style="
+                color: white;
+                margin-bottom: 24px;
+                font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+                line-height: 1.1;
+              "
+            >
+              Building Wealth<br />
+              <span style="color: var(--color-secondary)">Together, Rooted</span
+              ><br />
+              in African Wisdom
+            </h1>
+            <p
+              style="
+                color: rgba(255, 255, 255, 0.75);
+                font-size: 1.15rem;
+                max-width: 500px;
+                margin-bottom: 40px;
+                line-height: 1.75;
+              "
+            >
+              Alajo Yankee empowers communities through the time-honored &
+              trusted African tradition of collective savings and contributions,
+              modernized for today's world.
+            </p>
+            <div class="hero-btns flex gap-md" style="flex-wrap: wrap">
+              <a href="signup.html" class="btn btn-secondary btn-xl">
+                Get Started Free
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+              <a href="about.html" class="btn btn-outline-white btn-xl"
+                >Learn Our Story</a
+              >
+            </div>
+            <!-- Trust indicators -->
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 28px;
+                margin-top: 48px;
+                flex-wrap: wrap;
+              "
+            >
+              <div style="display: flex; align-items: center; gap: 8px">
+                <div style="display: flex">
+                  <div
+                    style="
+                      width: 30px;
+                      height: 30px;
+                      border-radius: 50%;
+                      background: linear-gradient(135deg, #d4a017, #f0c040);
+                      border: 2px solid rgba(255, 255, 255, 0.3);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 0.75rem;
+                      color: white;
+                      font-weight: 700;
+                      margin-right: -8px;
+                    "
+                  >
+                    K
+                  </div>
+                  <div
+                    style="
+                      width: 30px;
+                      height: 30px;
+                      border-radius: 50%;
+                      background: linear-gradient(135deg, #1a6b3c, #249152);
+                      border: 2px solid rgba(255, 255, 255, 0.3);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 0.75rem;
+                      color: white;
+                      font-weight: 700;
+                      margin-right: -8px;
+                    "
+                  >
+                    A
+                  </div>
+                  <div
+                    style="
+                      width: 30px;
+                      height: 30px;
+                      border-radius: 50%;
+                      background: linear-gradient(135deg, #8b3a1e, #c0522a);
+                      border: 2px solid rgba(255, 255, 255, 0.3);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 0.75rem;
+                      color: white;
+                      font-weight: 700;
+                    "
+                  >
+                    T
+                  </div>
+                </div>
+                <span
+                  style="color: rgba(255, 255, 255, 0.7); font-size: 0.85rem"
+                  >1,200+ members</span
+                >
+              </div>
+              <div style="color: rgba(255, 255, 255, 0.3)">|</div>
+              <div style="color: rgba(255, 255, 255, 0.7); font-size: 0.85rem">
+                ⭐ 4.9/5 community rating
+              </div>
+              <div style="color: rgba(255, 255, 255, 0.3)">|</div>
+              <div style="color: rgba(255, 255, 255, 0.7); font-size: 0.85rem">
+                🔒 Bank-level security
+              </div>
+            </div>
+          </div>
+
+          <!-- Right illustration -->
+          <div
+            class="hero-illustration"
+            style="animation: fadeRight 0.8s ease 0.2s both; opacity: 0"
+            aria-hidden="true"
+          >
+            <div
+              style="
+                background: rgba(255, 255, 255, 0.06);
+                backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 24px;
+                padding: 40px;
+                position: relative;
+              "
+            >
+              <!-- Mock savings card UI -->
+              <div
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    var(--color-secondary-dark),
+                    var(--color-secondary)
+                  );
+                  border-radius: 16px;
+                  padding: 28px;
+                  margin-bottom: 20px;
+                  box-shadow: 0 8px 32px rgba(212, 160, 23, 0.3);
+                "
+              >
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <span
+                    style="
+                      color: rgba(255, 255, 255, 0.8);
+                      font-size: 0.82rem;
+                      font-weight: 600;
+                      letter-spacing: 0.08em;
+                      text-transform: uppercase;
+                    "
+                    >Group Savings</span
+                  >
+                  <span style="color: white; font-size: 1.2rem">Ajo</span>
+                </div>
+                <div
+                  style="
+                    color: white;
+                    font-family: var(--font-display);
+                    font-size: 2.4rem;
+                    font-weight: 800;
+                    margin-bottom: 8px;
+                  "
+                >
+                  $24,500
+                </div>
+                <div
+                  style="color: rgba(255, 255, 255, 0.75); font-size: 0.85rem"
+                >
+                  Community Pool · 12 members
+                </div>
+              </div>
+              <!-- Activity feed -->
+              <div style="display: flex; flex-direction: column; gap: 12px">
+                <div
+                  style="
+                    background: rgba(255, 255, 255, 0.08);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                  "
+                >
+                  <div
+                    style="
+                      width: 36px;
+                      height: 36px;
+                      border-radius: 50%;
+                      background: var(--color-success);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 0.9rem;
+                      flex-shrink: 0;
+                    "
+                  >
+                    ✓
+                  </div>
+                  <div>
+                    <div
+                      style="color: white; font-size: 0.88rem; font-weight: 600"
+                    >
+                      Kwame A. contributed
+                    </div>
+                    <div
+                      style="
+                        color: rgba(255, 255, 255, 0.5);
+                        font-size: 0.78rem;
+                      "
+                    >
+                      +$500 · just now
+                    </div>
+                  </div>
+                  <div
+                    style="
+                      margin-left: auto;
+                      color: var(--color-secondary-light);
+                      font-weight: 700;
+                      font-size: 0.95rem;
+                    "
+                  >
+                    $500
+                  </div>
+                </div>
+                <div
+                  style="
+                    background: rgba(255, 255, 255, 0.08);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                  "
+                >
+                  <div
+                    style="
+                      width: 36px;
+                      height: 36px;
+                      border-radius: 50%;
+                      background: var(--color-primary-light);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 0.9rem;
+                      flex-shrink: 0;
+                    "
+                  >
+                    ✓
+                  </div>
+                  <div>
+                    <div
+                      style="color: white; font-size: 0.88rem; font-weight: 600"
+                    >
+                      Amara O. received
+                    </div>
+                    <div
+                      style="
+                        color: rgba(255, 255, 255, 0.5);
+                        font-size: 0.78rem;
+                      "
+                    >
+                      Monthly payout · 2h ago
+                    </div>
+                  </div>
+                  <div
+                    style="
+                      margin-left: auto;
+                      color: var(--color-secondary-light);
+                      font-weight: 700;
+                      font-size: 0.95rem;
+                    "
+                  >
+                    $2,000
+                  </div>
+                </div>
+                <div
+                  style="
+                    background: rgba(255, 255, 255, 0.06);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                  "
+                >
+                  <div
+                    style="
+                      width: 36px;
+                      height: 36px;
+                      border-radius: 50%;
+                      background: rgba(255, 255, 255, 0.15);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 0.9rem;
+                      flex-shrink: 0;
+                    "
+                  >
+                    ⏳
+                  </div>
+                  <div>
+                    <div
+                      style="
+                        color: rgba(255, 255, 255, 0.7);
+                        font-size: 0.88rem;
+                        font-weight: 600;
+                      "
+                    >
+                      Next payout scheduled
+                    </div>
+                    <div
+                      style="
+                        color: rgba(255, 255, 255, 0.4);
+                        font-size: 0.78rem;
+                      "
+                    >
+                      In 14 days · Tunde B.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</footer>
+    </section>
 
-<style>
-  @keyframes fadeUp    { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes fadeRight { from { opacity:0; transform:translateX(28px); } to { opacity:1; transform:translateX(0); } }
-</style>
+    <!-- ══════════ STATS ══════════ -->
+    <section style="padding: 0; background: white">
+      <div class="container">
+        <div
+          class="stats-grid"
+          style="border-radius: 0; border-top: 1px solid var(--color-border)"
+        >
+          <div class="stat-item">
+            <div class="stat-number">$2.4M+</div>
+            <div class="stat-label">Total Savings Pooled</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">1,200+</div>
+            <div class="stat-label">Active Members</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Member Satisfaction</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Communities Served</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<script src="js/main.js"></script>
-</body>
+    <!-- ══════════ ABOUT PREVIEW ══════════ -->
+    <section style="background: white; padding: 96px 0" id="about">
+      <div class="container">
+        <div class="split-section">
+          <div>
+            <span class="section-label">Our Foundation</span>
+            <h2 style="margin-bottom: 20px">
+              Rooted in Community,<br />Built for Today
+            </h2>
+            <p style="margin-bottom: 24px; font-size: 1.05rem">
+              Alajo Yankee draws from the West African "Ajo", "Esusu" and "Susu"
+              traditions of rotating savings groups, where members contribute
+              regularly and take turns receiving the full pot. We've digitized
+              this powerful model for diaspora communities in the United States.
+            </p>
+            <p style="margin-bottom: 36px">
+              Whatever your current persuasions about Africa, the motherland was
+              the cradle of extra-ordinary wealth. Africa had systems/traditions
+              to make & grow wealth that persists till today. Our platform
+              combines cultural trust with modern financial technology, giving
+              families and friends a secure, transparent way to save and grow
+              wealth together, just as their ancestors did.
+            </p>
+            <div style="display: flex; flex-wrap: wrap; gap: 16px">
+              <a href="about.html" class="btn btn-primary">Our Full Story</a>
+              <a href="services.html" class="btn btn-outline"
+                >Explore Services</a
+              >
+            </div>
+          </div>
+          <div class="split-image">
+            <div class="split-image-placeholder">🌍</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ SERVICES ══════════ -->
+    <section style="background: var(--color-bg-alt)" id="services">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">What We Offer</span>
+          <h2>Services Built<br />for Your Community</h2>
+          <p>
+            From traditional savings circles to modern digital tools, we provide
+            everything your group needs to thrive financially.
+          </p>
+        </div>
+        <div class="grid-3">
+          <div class="card service-card">
+            <div class="card-icon">🤝</div>
+            <h3>Community Savings Circles</h3>
+            <p>
+              Join or create rotating savings groups (Ajo/Susu) with transparent
+              tracking, automated reminders, and secure fund management.
+            </p>
+            <a href="services.html" class="card-cta">Learn More →</a>
+          </div>
+          <div class="card service-card">
+            <div class="card-icon gold">📚</div>
+            <h3>Financial Education</h3>
+            <p>
+              Access workshops, webinars, and resources designed to build
+              lasting financial literacy within diaspora communities.
+            </p>
+            <a href="services.html" class="card-cta">Learn More →</a>
+          </div>
+          <div class="card service-card">
+            <div class="card-icon accent">💡</div>
+            <h3>Digital Tools & Platform</h3>
+            <p>
+              Manage your group's contributions, track payouts, and communicate
+              with members — all in one secure digital hub.
+            </p>
+            <a href="services.html" class="card-cta">Learn More →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ FEATURES ══════════ -->
+    <section style="background: white" id="features">
+      <div class="container">
+        <div class="split-section reverse">
+          <div>
+            <span class="section-label">Why Alajo Yankee</span>
+            <h2 style="margin-bottom: 32px">
+              The Smart Way to Save<br />as a Community
+            </h2>
+            <div>
+              <div class="feature-item">
+                <div class="feature-number">01</div>
+                <div>
+                  <h4 style="margin-bottom: 8px">Transparent & Accountable</h4>
+                  <p>
+                    Every contribution and payout is logged in real-time. Every
+                    member can see the group's full financial history.
+                  </p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-number">02</div>
+                <div>
+                  <h4 style="margin-bottom: 8px">Culturally Grounded</h4>
+                  <p>
+                    We honor and preserve the wisdom of African mutual aid
+                    traditions while adapting them for modern life.
+                  </p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-number">03</div>
+                <div>
+                  <h4 style="margin-bottom: 8px">Bank-Level Security</h4>
+                  <p>
+                    JWT authentication, encrypted data, and secure payment
+                    processing keep every member's information safe.
+                  </p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-number">04</div>
+                <div>
+                  <h4 style="margin-bottom: 8px">No Hidden Fees</h4>
+                  <p>
+                    What you put in is what your group gets out. Our transparent
+                    fee structure puts community first.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="split-image">
+            <div class="split-image-placeholder">📊</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ TESTIMONIALS ══════════ -->
+    <section style="background: var(--color-bg-alt)" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label gold">Community Voices</span>
+          <h2>What Our Members Say</h2>
+          <p>
+            Real stories from people who've grown their savings and strengthened
+            their community through Alajo Yankee.
+          </p>
+        </div>
+        <div class="grid-3">
+          <div class="card testimonial-card">
+            <div class="stars" aria-label="5 stars">★★★★★</div>
+            <p class="testimonial-text">
+              Alajo Yankee helped my family save $15,000 over just one year. The
+              platform is simple, and the community feeling is real. It's
+              exactly like what my grandmother described back in Nigeria.
+            </p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">KO</div>
+              <div>
+                <div class="testimonial-name">Kemi Oduya</div>
+                <div class="testimonial-role">
+                  Member since 2022 · Houston, TX
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card testimonial-card">
+            <div class="stars" aria-label="5 stars">★★★★★</div>
+            <p class="testimonial-text">
+              I started a savings group with my church friends and Alajo Yankee
+              made it effortless. No more spreadsheets, no more confusion — just
+              clear, honest savings for everyone.
+            </p>
+            <div class="testimonial-author">
+              <div
+                class="testimonial-avatar"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    var(--color-secondary-dark),
+                    var(--color-secondary)
+                  );
+                "
+              >
+                AB
+              </div>
+              <div>
+                <div class="testimonial-name">Abena Boateng</div>
+                <div class="testimonial-role">Group Leader · Atlanta, GA</div>
+              </div>
+            </div>
+          </div>
+          <div class="card testimonial-card">
+            <div class="stars" aria-label="5 stars">★★★★★</div>
+            <p class="testimonial-text">
+              As a financial advisor, I recommend Alajo Yankee to my clients in
+              the African diaspora. It builds discipline, community, and real
+              wealth — all rooted in a tradition we should be proud of.
+            </p>
+            <div class="testimonial-author">
+              <div
+                class="testimonial-avatar"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    var(--color-accent),
+                    #e06030
+                  );
+                "
+              >
+                TI
+              </div>
+              <div>
+                <div class="testimonial-name">Tunde Ibidun, CFP</div>
+                <div class="testimonial-role">
+                  Financial Advisor · Chicago, IL
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ CTA ══════════ -->
+    <section class="cta-section">
+      <div class="container" style="position: relative; z-index: 1">
+        <span
+          class="section-label gold"
+          style="margin-bottom: 20px; display: inline-block"
+          >Start Today</span
+        >
+        <h2 style="max-width: 640px; margin: 0 auto 16px">
+          Ready to Build Wealth<br />With Your Community?
+        </h2>
+        <p style="max-width: 500px; margin: 0 auto 40px">
+          Join over 1,200 members who are saving together, growing together, and
+          honoring a tradition that spans generations.
+        </p>
+        <div class="cta-buttons">
+          <a href="signup.html" class="btn btn-secondary btn-xl"
+            >Create Free Account</a
+          >
+          <a href="contact.html" class="btn btn-outline-white btn-xl"
+            >Talk to Us</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ FOOTER ══════════ -->
+    <footer class="footer" role="contentinfo">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="index.html" class="nav-logo">
+              <div class="nav-logo-icon">A</div>
+              Alajo Yankee
+            </a>
+            <p>
+              Building community wealth through the trusted African tradition of
+              collective savings and contributions — modernized for the
+              diaspora.
+            </p>
+            <div class="footer-social">
+              <a href="#" class="social-btn" aria-label="Facebook">f</a>
+              <a href="#" class="social-btn" aria-label="Twitter/X">𝕏</a>
+              <a href="#" class="social-btn" aria-label="Instagram">📷</a>
+              <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h5>Platform</h5>
+            <div class="footer-links">
+              <a href="index.html">Home</a>
+              <a href="about.html">About Us</a>
+              <a href="services.html">Services</a>
+              <a href="contact.html">Contact</a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h5>Account</h5>
+            <div class="footer-links">
+              <a href="signup.html">Create Account</a>
+              <a href="signin.html">Sign In</a>
+              <a href="dashboard.html">Dashboard</a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h5>Legal</h5>
+            <div class="footer-links">
+              <a href="#">Privacy Policy</a>
+              <a href="#">Terms of Service</a>
+              <a href="#">Cookie Policy</a>
+              <a href="#">Security</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="border-top: 1px solid rgba(255, 255, 255, 0.08)">
+        <div class="container">
+          <div class="footer-bottom">
+            <span
+              >&copy; <span id="year"></span> Alajo Yankee. All rights
+              reserved.</span
+            >
+            <span>Made with ❤️ for the African diaspora community</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <style>
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(28px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeRight {
+        from {
+          opacity: 0;
+          transform: translateX(28px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+    </style>
+
+    <script src="js/main.js"></script>
+  </body>
 </html>

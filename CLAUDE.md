@@ -11,11 +11,14 @@ It is a full-stack web application with a vanilla JS frontend and a Node.js/Expr
 ## Commands
 
 ```bash
-npm install           # Install dependencies
-npm run dev           # Start development server with nodemon (auto-reload)
-npm start             # Start production server
-npm run db:init       # Create / migrate database schema (idempotent, safe to re-run)
+npm install              # Install dependencies
+npm run dev              # Start development server with nodemon (auto-reload)
+npm start                # Start production server
+npm run db:init          # Create / migrate database schema (idempotent, safe to re-run)
+npm run db:wipe-runtime  # ⚠️ DESTRUCTIVE — wipe pool/rotation/payment tables (keeps users + lookups)
 ```
+
+All scripts pass `--use-system-ca` so Node trusts the OS certificate store (needed when the local network does TLS interception of outbound SMTP/HTTPS).
 
 The server runs on `http://localhost:3000`. There is no build step — the frontend is served as static files from `/client`. There are no test or lint scripts configured.
 
@@ -61,7 +64,7 @@ Browser → Express (app.js)
 
 **No ORM** — raw SQL with named parameterized queries through `mssql`. Add tables in `initDb.js` and run `npm run db:init`.
 
-### Database (12 tables)
+### Database (13 tables)
 
 **Identity / messaging**
 - `Users` — accounts; `Role` is `'member'` or `'admin'`; `IsActive` for soft-disable; tracks `Phone` and `LastLoginAt`
@@ -78,10 +81,11 @@ Browser → Express (app.js)
 - `ContributionPool` — `Status ∈ {open, filled, completed}`; tied to one row from each lookup table
 - `ContributionPoolEnrollment` — `(PoolID, UserID, Rank)` with `UNIQUE(PoolID, UserID)` and `UNIQUE(PoolID, Rank)`
 - `Rotation` — created when pool fills; `Status ∈ {started, in-progress, completed}`; one rotation per pool (`UNIQUE(PoolID)`)
-- `RotationDetail` — per-member row in a rotation; carries `ContributionDue` and `ContributionDueDate`
+- `RotationDetail` — **one row per "collection event" (rank → recipient).** `UserID` is the recipient who collects on `MemberCollectionDate`. N rows per rotation.
+- `RotationDetailContribution` — **one row per (collection event × member).** `UserID` is the contributor; `ContributionDueDate` equals the parent's `MemberCollectionDate`. **N×N rows per rotation** — every member contributes on every collection date.
 
 **Payments + notifications**
-- `Payments` — `(RotationID, UserID, Amount, Status)`; `Status ∈ {Pending, Verified, Failed}`; `VerifiedBy` references the admin
+- `Payments` — `(RotationID, UserID, MemberToBePaid, Amount, Status)`. `UserID` = payer, `MemberToBePaid` = recipient (the rank-K member collecting on this date). `Status ∈ {Pending, Verified, Failed}`. Natural key: `(RotationID, UserID, MemberToBePaid)`.
 - `Notifications` — `Type ∈ {Email, SMS}`; `IsSent` + `SentAt` track delivery vs. stub
 
 ### Frontend (`client/`)
@@ -114,7 +118,7 @@ Browser → Express (app.js)
 | GET | `/api/pools/active` | JWT | Caller's active enrollments |
 | GET | `/api/rotations/current` | JWT | Caller's `started` / `in-progress` rotations with their `RotationDetail` |
 | GET | `/api/rotations/history` | JWT | Caller's `completed` rotations |
-| POST | `/api/payments/submit` | JWT | Member submits payment for a contribution they own |
+| POST | `/api/payments/submit` | JWT | Body `{ rotationDetailContributionID, amount }`. Server derives `MemberToBePaid` from the parent `RotationDetail.UserID`. |
 | GET | `/api/payments/mine` | JWT | Caller's payment history + verified/pending totals |
 | GET | `/api/payments/pending` | Admin | Payments awaiting verification |
 | POST | `/api/payments/verify` | Admin | Mark `Verified` or `Failed`; advances rotation status |
@@ -144,12 +148,18 @@ Defense in depth:
 - `RotationStartDate` = next Monday strictly **after** the fill date (filling on a Monday jumps to the following Monday).
 - `LastContributionDate` = `StartDate + (PoolSize − 1) × ValueInDays`, snapped forward to a Monday if the schedule isn't a multiple of 7.
 - `RotationEndDate` = first Friday strictly after `LastContributionDate`.
-- Per-member `ContributionDueDate` = `StartDate + (Rank − 1) × ValueInDays`.
+- Per-rank `MemberCollectionDate` = `StartDate + (Rank − 1) × ValueInDays`. Each contribution row inherits this same date as its `ContributionDueDate`.
+
+**N×N model** — `services/rotationEngine.createRotationForPool` writes both:
+- N `RotationDetail` rows (one per rank) — each row is a *collection event* identifying who receives the pot on that date.
+- N×N `RotationDetailContribution` rows — for every collection event × every member, one row identifying that member's obligation to pay on that date. Inserted in the same transaction as the RotationDetail rows.
+
+So a pool of 5 with $500 contribution generates 5 collection events and 25 contribution rows. Each member pays 5 × $500 = $2,500 across the rotation and collects $2,500 once on their own collection date.
 
 **Verification** — `controllers/paymentController.verify` runs inside a transaction:
 1. Stamp the payment with `VerifiedBy` and the new status.
 2. If `Verified` and rotation is `started`, advance to `in-progress`.
-3. If verified-payment count == `RotationDetail` count, mark `Rotation` and `ContributionPool` as `completed` and notify all members.
+3. If verified-payment count == `RotationDetailContribution` count (i.e. all N×N obligations met), mark `Rotation` and `ContributionPool` as `completed` and notify all members.
 
 ## Notifications (PRD §6)
 

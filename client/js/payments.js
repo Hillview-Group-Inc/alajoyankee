@@ -29,16 +29,17 @@
         apiRequest('/payments/mine'),
       ]);
 
-      // Skip rotation details that already have a Pending or Verified payment.
-      // Match on (RotationID, due-date) — paymentDate is set to the submission time
-      // not the due-date, so this is a best-effort filter using RotationID alone.
-      const paidRotationIDs = new Set(
-        payments.filter(p => p.Status !== 'Failed').map(p => p.RotationID)
+      // Skip contributions that already have a Pending or Verified payment.
+      // Natural key for a contribution: (RotationID, MemberToBePaid).
+      const paidKeys = new Set(
+        payments.filter(p => p.Status !== 'Failed')
+                .map(p => `${p.RotationID}:${p.MemberToBePaid}`)
       );
 
       const today = new Date(); today.setHours(0,0,0,0);
-      const due = rotations.filter(r => !paidRotationIDs.has(r.RotationID))
-                           .sort((a,b) => new Date(a.ContributionDueDate) - new Date(b.ContributionDueDate));
+      const due = rotations
+        .filter(r => !paidKeys.has(`${r.RotationID}:${r.RecipientUserID}`))
+        .sort((a, b) => new Date(a.ContributionDueDate) - new Date(b.ContributionDueDate));
 
       if (!due.length) {
         wrap.innerHTML = `<div style="text-align:center;padding:24px;color:var(--color-text-muted);">
@@ -51,19 +52,19 @@
       wrap.innerHTML = `
         <table class="data-table">
           <thead><tr>
-            <th>Due</th><th>Pool</th><th>Rank</th><th>Amount</th><th></th>
+            <th>Due</th><th>Pool</th><th>Paid to</th><th>Amount</th><th></th>
           </tr></thead>
           <tbody>
             ${due.map(r => {
               const overdue = new Date(r.ContributionDueDate) < today;
               return `
-                <tr data-rdid="${r.RotationDetailID}" data-amt="${r.ContributionDue}">
+                <tr data-rdcid="${r.RotationDetailContributionID}" data-amt="${r.ContributionDue}">
                   <td>
                     ${fmtDate(r.ContributionDueDate)}
                     ${overdue ? '<span class="badge" style="background:#fef2f2;color:var(--color-error);margin-left:6px;">overdue</span>' : ''}
                   </td>
                   <td>${escHtml(r.PoolSizeName)}<br><span style="font-size:.78rem;color:var(--color-text-muted);">${escHtml(r.RotationScheduleName)}</span></td>
-                  <td>#${r.Rank}</td>
+                  <td>${escHtml(r.RecipientName || '—')}<br><span style="font-size:.78rem;color:var(--color-text-muted);">rank #${r.RecipientRank}</span></td>
                   <td style="font-weight:600;">${fmt$(r.ContributionDue)}</td>
                   <td><button class="btn btn-primary btn-sm" data-pay>Pay Now</button></td>
                 </tr>
@@ -75,7 +76,7 @@
       wrap.querySelectorAll('button[data-pay]').forEach(btn => {
         btn.addEventListener('click', () => {
           const tr = btn.closest('tr');
-          submitPayment(parseInt(tr.dataset.rdid, 10), Number(tr.dataset.amt));
+          submitPayment(parseInt(tr.dataset.rdcid, 10), Number(tr.dataset.amt));
         });
       });
     } catch (err) {
@@ -83,12 +84,12 @@
     }
   }
 
-  async function submitPayment(rotationDetailID, amount) {
+  async function submitPayment(rotationDetailContributionID, amount) {
     if (!confirm(`Submit a payment of ${fmt$(amount)}? An admin will verify it before it counts.`)) return;
     try {
       await apiRequest('/payments/submit', {
         method: 'POST',
-        body: JSON.stringify({ rotationDetailID, amount }),
+        body: JSON.stringify({ rotationDetailContributionID, amount }),
       });
       showToast('Submitted', 'success', 'Awaiting admin verification.');
       loadAll();
@@ -113,13 +114,14 @@
       wrap.innerHTML = `
         <table class="data-table">
           <thead><tr>
-            <th>Date</th><th>Pool</th><th>Amount</th><th>Status</th>
+            <th>Date</th><th>Pool</th><th>Paid to</th><th>Amount</th><th>Status</th>
           </tr></thead>
           <tbody>
             ${payments.map(p => `
               <tr>
                 <td style="font-size:.85rem;color:var(--color-text-muted);">${fmtDate(p.PaymentDate)}</td>
                 <td>${escHtml(p.PoolSizeName)}<br><span style="font-size:.78rem;color:var(--color-text-muted);">${escHtml(p.RotationName)}</span></td>
+                <td>${escHtml(p.RecipientName || '—')}</td>
                 <td style="font-weight:600;">${fmt$(p.Amount)}</td>
                 <td>
                   <span class="badge ${p.Status === 'Verified' ? 'badge-green' : (p.Status === 'Failed' ? '' : 'badge-gold')}"

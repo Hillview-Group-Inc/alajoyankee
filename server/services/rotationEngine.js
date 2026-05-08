@@ -107,22 +107,50 @@ async function createRotationForPool(tx, { poolID, poolSize, valueInDays, contri
   );
   const rotationID = rotResult.recordset[0].RotationID;
 
+  // Step A: one RotationDetail per rank (the "collection event" — who collects when)
+  const collectionEvents = [];
   for (const e of enrollments) {
-    const dueDate = computeDueDate(startDate, e.rank, valueInDays);
-    await txQuery(
+    const memberCollectionDate = computeDueDate(startDate, e.rank, valueInDays);
+    const rd = await txQuery(
       tx,
       `INSERT INTO RotationDetail
-         (RotationID, PoolID, UserID, Rank, ContributionDue, ContributionDueDate)
-       VALUES (@rotationID, @poolID, @userID, @rank, @amt, @due)`,
+         (RotationID, PoolID, UserID, Rank, ContributionDue, MemberCollectionDate)
+       OUTPUT INSERTED.RotationDetailID
+       VALUES (@rotationID, @poolID, @userID, @rank, @amt, @collectionDate)`,
       {
-        rotationID: { type: sql.Int,           value: rotationID },
-        poolID:     { type: sql.Int,           value: poolID },
-        userID:     { type: sql.Int,           value: e.userID },
-        rank:       { type: sql.Int,           value: e.rank },
-        amt:        { type: sql.Decimal(18,2), value: contributionAmount },
-        due:        { type: sql.Date,          value: dueDate },
+        rotationID:      { type: sql.Int,           value: rotationID },
+        poolID:          { type: sql.Int,           value: poolID },
+        userID:          { type: sql.Int,           value: e.userID },   // recipient
+        rank:            { type: sql.Int,           value: e.rank },
+        amt:             { type: sql.Decimal(18,2), value: contributionAmount },
+        collectionDate:  { type: sql.Date,          value: memberCollectionDate },
       }
     );
+    collectionEvents.push({
+      rotationDetailID: rd.recordset[0].RotationDetailID,
+      memberCollectionDate,
+    });
+  }
+
+  // Step B: N×N contributions — every member contributes on every collection date
+  for (const event of collectionEvents) {
+    for (const contributor of enrollments) {
+      await txQuery(
+        tx,
+        `INSERT INTO RotationDetailContribution
+           (RotationDetailID, RotationID, PoolID, UserID, Rank, ContributionDue, ContributionDueDate)
+         VALUES (@rdID, @rotationID, @poolID, @userID, @rank, @amt, @dueDate)`,
+        {
+          rdID:       { type: sql.Int,           value: event.rotationDetailID },
+          rotationID: { type: sql.Int,           value: rotationID },
+          poolID:     { type: sql.Int,           value: poolID },
+          userID:     { type: sql.Int,           value: contributor.userID },
+          rank:       { type: sql.Int,           value: contributor.rank },     // contributor's rank
+          amt:        { type: sql.Decimal(18,2), value: contributionAmount },
+          dueDate:    { type: sql.Date,          value: event.memberCollectionDate },
+        }
+      );
+    }
   }
 
   return { rotationID, startDate, lastContributionDate, endDate };

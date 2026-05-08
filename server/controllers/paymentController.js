@@ -12,10 +12,11 @@ const { renderEmail, renderText, esc } = require('../services/emailTemplates');
 
 /* ══════════════════════════════════════════
    POST /api/payments/submit
-   Body: { rotationDetailID, amount }
-   Member submits a payment against a contribution they owe.
-   The detail must belong to the signed-in user.
-   Status starts as 'Pending' awaiting admin verification.
+   Body: { rotationDetailContributionID, amount }
+   Member submits a payment against a specific contribution they owe.
+   The contribution row must belong to the signed-in user.
+   MemberToBePaid is derived from the parent RotationDetail (the recipient
+   for that collection event). Status starts as 'Pending'.
    ══════════════════════════════════════════ */
 async function submit(req, res, next) {
   const errors = validationResult(req);
@@ -23,55 +24,60 @@ async function submit(req, res, next) {
     return res.status(422).json({ message: 'Validation failed', errors: errors.array() });
   }
 
-  const userID            = req.user.userID;
-  const rotationDetailID  = parseInt(req.body.rotationDetailID, 10);
-  const amount            = Number(req.body.amount);
+  const userID                       = req.user.userID;
+  const rotationDetailContributionID = parseInt(req.body.rotationDetailContributionID, 10);
+  const amount                       = Number(req.body.amount);
 
   try {
-    // Look up the detail and verify ownership + amount
+    // Look up the contribution row + parent collection event + rotation status
     const detail = await query(
-      `SELECT rd.RotationDetailID, rd.RotationID, rd.UserID, rd.ContributionDue,
-              rd.ContributionDueDate, r.Status AS RotationStatus
-       FROM RotationDetail rd
-       JOIN Rotation r ON r.RotationID = rd.RotationID
-       WHERE rd.RotationDetailID = @rdID`,
-      { rdID: { type: sql.Int, value: rotationDetailID } }
+      `SELECT rdc.RotationDetailContributionID, rdc.RotationDetailID, rdc.RotationID,
+              rdc.UserID AS ContributorUserID, rdc.ContributionDue, rdc.ContributionDueDate,
+              rd.UserID  AS RecipientUserID,
+              r.Status   AS RotationStatus
+       FROM RotationDetailContribution rdc
+       JOIN RotationDetail rd ON rd.RotationDetailID = rdc.RotationDetailID
+       JOIN Rotation        r ON r.RotationID        = rdc.RotationID
+       WHERE rdc.RotationDetailContributionID = @rdcID`,
+      { rdcID: { type: sql.Int, value: rotationDetailContributionID } }
     );
     if (!detail.recordset.length) {
       return res.status(404).json({ message: 'Contribution not found.' });
     }
     const d = detail.recordset[0];
-    if (d.UserID !== userID) {
+    if (d.ContributorUserID !== userID) {
       return res.status(403).json({ message: 'You can only submit payments for your own contributions.' });
     }
     if (d.RotationStatus === 'completed') {
       return res.status(409).json({ message: 'This rotation is already completed.' });
     }
 
-    // Reject duplicate pending/verified payment for the same detail
+    // Reject duplicate Pending/Verified payment for THIS specific contribution.
+    // Natural key: (RotationID, payer UserID, recipient MemberToBePaid).
     const existing = await query(
       `SELECT PaymentID FROM Payments
-       WHERE RotationID = @rotID AND UserID = @userID AND Status IN ('Pending','Verified')
-         AND CAST(PaymentDate AS DATE) = CAST(@dueDate AS DATE)`,
+       WHERE RotationID = @rotID AND UserID = @userID AND MemberToBePaid = @memberToBePaid
+         AND Status IN ('Pending','Verified')`,
       {
-        rotID:   { type: sql.Int,      value: d.RotationID },
-        userID:  { type: sql.Int,      value: userID },
-        dueDate: { type: sql.Date,     value: d.ContributionDueDate },
+        rotID:           { type: sql.Int, value: d.RotationID },
+        userID:          { type: sql.Int, value: userID },
+        memberToBePaid:  { type: sql.Int, value: d.RecipientUserID },
       }
     );
     if (existing.recordset.length > 0) {
       return res.status(409).json({ message: 'A payment for this contribution is already on file.' });
     }
 
-    // Insert payment
+    // Insert payment with MemberToBePaid derived from the parent RotationDetail
     const result = await query(
-      `INSERT INTO Payments (RotationID, UserID, Amount, Status)
+      `INSERT INTO Payments (RotationID, UserID, MemberToBePaid, Amount, Status)
        OUTPUT INSERTED.PaymentID, INSERTED.PaymentDate, INSERTED.Status
-       VALUES (@rotID, @userID, @amount, 'Pending')`,
+       VALUES (@rotID, @userID, @memberToBePaid, @amount, 'Pending')`,
       {
-        rotID:  { type: sql.Int,           value: d.RotationID },
-        userID: { type: sql.Int,           value: userID },
-        amount: { type: sql.Decimal(18,2), value: amount },
+        rotID:          { type: sql.Int,           value: d.RotationID },
+        userID:         { type: sql.Int,           value: userID },
+        memberToBePaid: { type: sql.Int,           value: d.RecipientUserID },
+        amount:         { type: sql.Decimal(18,2), value: amount },
       }
     );
     const inserted = result.recordset[0];
@@ -83,7 +89,8 @@ async function submit(req, res, next) {
         paymentDate: inserted.PaymentDate,
         amount,
         status:      inserted.Status,
-        rotationDetailID,
+        rotationDetailContributionID,
+        memberToBePaid: d.RecipientUserID,
       },
     });
   } catch (err) {
@@ -100,13 +107,16 @@ async function getMine(req, res, next) {
     const result = await query(
       `SELECT
          p.PaymentID, p.RotationID, p.Amount, p.PaymentDate, p.Status, p.VerifiedBy,
+         p.MemberToBePaid,
+         recipient.FirstName + ' ' + recipient.LastName AS RecipientName,
          r.RotationName, r.RotationStartDate, r.RotationEndDate,
          ps.PoolSizeName, ca.Amount AS ContributionAmount
        FROM Payments p
-       JOIN Rotation r           ON r.RotationID = p.RotationID
-       JOIN ContributionPool cp  ON cp.PoolID = r.PoolID
-       JOIN PoolSize ps          ON ps.PoolSizeID = cp.PoolSizeID
+       JOIN Rotation r            ON r.RotationID = p.RotationID
+       JOIN ContributionPool cp   ON cp.PoolID = r.PoolID
+       JOIN PoolSize ps           ON ps.PoolSizeID = cp.PoolSizeID
        JOIN ContributionAmount ca ON ca.ContributionAmountID = cp.ContributionAmountID
+       LEFT JOIN Users recipient  ON recipient.UserID = p.MemberToBePaid
        WHERE p.UserID = @userID
        ORDER BY p.PaymentDate DESC`,
       { userID: { type: sql.Int, value: req.user.userID } }
@@ -139,14 +149,17 @@ async function getPending(req, res, next) {
     const result = await query(
       `SELECT
          p.PaymentID, p.RotationID, p.UserID, p.Amount, p.PaymentDate, p.Status,
+         p.MemberToBePaid,
          u.FirstName, u.LastName, u.Email, u.Phone,
+         recipient.FirstName + ' ' + recipient.LastName AS RecipientName,
          r.RotationName, ps.PoolSizeName, ca.Amount AS ContributionAmount
        FROM Payments p
-       JOIN Users u              ON u.UserID = p.UserID
-       JOIN Rotation r           ON r.RotationID = p.RotationID
-       JOIN ContributionPool cp  ON cp.PoolID = r.PoolID
-       JOIN PoolSize ps          ON ps.PoolSizeID = cp.PoolSizeID
+       JOIN Users u               ON u.UserID = p.UserID
+       JOIN Rotation r            ON r.RotationID = p.RotationID
+       JOIN ContributionPool cp   ON cp.PoolID = r.PoolID
+       JOIN PoolSize ps           ON ps.PoolSizeID = cp.PoolSizeID
        JOIN ContributionAmount ca ON ca.ContributionAmountID = cp.ContributionAmountID
+       LEFT JOIN Users recipient  ON recipient.UserID = p.MemberToBePaid
        WHERE p.Status = 'Pending'
        ORDER BY p.PaymentDate ASC`
     );
@@ -180,7 +193,8 @@ async function verify(req, res, next) {
         `UPDATE Payments
            SET Status = @status, VerifiedBy = @adminID
            OUTPUT INSERTED.PaymentID, INSERTED.RotationID, INSERTED.UserID,
-                  INSERTED.Amount, INSERTED.Status, INSERTED.PaymentDate
+                  INSERTED.MemberToBePaid, INSERTED.Amount, INSERTED.Status,
+                  INSERTED.PaymentDate
          WHERE PaymentID = @pID AND Status = 'Pending'`,
         {
           status:  { type: sql.NVarChar(20), value: status },
@@ -195,13 +209,23 @@ async function verify(req, res, next) {
       }
       const payment = upd.recordset[0];
 
-      // 2. Fetch user (needed for notification + recipient phone/email)
+      // 2. Fetch payer + recipient (for notification context)
       const userRow = await txQuery(
         tx,
         `SELECT UserID, FirstName, Email, Phone FROM Users WHERE UserID = @uID`,
         { uID: { type: sql.Int, value: payment.UserID } }
       );
       const user = userRow.recordset[0];
+
+      let recipient = null;
+      if (payment.MemberToBePaid) {
+        const recRow = await txQuery(
+          tx,
+          `SELECT UserID, FirstName, LastName FROM Users WHERE UserID = @uID`,
+          { uID: { type: sql.Int, value: payment.MemberToBePaid } }
+        );
+        recipient = recRow.recordset[0] || null;
+      }
 
       // 3. If verified, mark the rotation in-progress at minimum, and check
       //    whether every member has now paid → mark Rotation completed.
@@ -214,12 +238,14 @@ async function verify(req, res, next) {
           { rID: { type: sql.Int, value: payment.RotationID } }
         );
 
-        // Compare verified payments vs. expected detail count
+        // Compare verified payments vs. expected contribution count.
+        // With the N×N model, the rotation is complete when every contribution
+        // (every member × every collection event) has been verified.
         const counts = await txQuery(
           tx,
           `SELECT
-             (SELECT COUNT(*) FROM RotationDetail WHERE RotationID = @rID)                          AS Expected,
-             (SELECT COUNT(*) FROM Payments WHERE RotationID = @rID AND Status = 'Verified')        AS Verified`,
+             (SELECT COUNT(*) FROM RotationDetailContribution WHERE RotationID = @rID) AS Expected,
+             (SELECT COUNT(*) FROM Payments WHERE RotationID = @rID AND Status = 'Verified') AS Verified`,
           { rID: { type: sql.Int, value: payment.RotationID } }
         );
         const { Expected, Verified } = counts.recordset[0];
@@ -241,11 +267,12 @@ async function verify(req, res, next) {
         }
       }
 
-      return { payment, user, rotationCompleted };
+      return { payment, user, recipient, rotationCompleted };
     });
 
     /* Outside the transaction: send notifications (PRD §6.4 / §6.5) */
-    const { payment, user, rotationCompleted } = result;
+    const { payment, user, recipient, rotationCompleted } = result;
+    const recipientName = recipient ? `${recipient.FirstName} ${recipient.LastName}` : null;
 
     const baseUrl = process.env.PUBLIC_URL || 'http://localhost:3000';
     const fmtDate = (d) => new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
@@ -261,6 +288,7 @@ async function verify(req, res, next) {
         ],
         rows: [
           ['Amount',  `<strong>$${Number(payment.Amount).toLocaleString()}</strong>`],
+          ['Paid to', recipientName ? esc(recipientName) : '—'],
           ['Date',    fmtDate(payment.PaymentDate)],
           ['Status',  `<span style="color:#16a34a;font-weight:700;">${esc(payment.Status)}</span>`],
         ],
@@ -285,6 +313,7 @@ async function verify(req, res, next) {
         ],
         rows: [
           ['Amount',  `<strong>$${Number(payment.Amount).toLocaleString()}</strong>`],
+          ['Intended for', recipientName ? esc(recipientName) : '—'],
           ['Date submitted', fmtDate(payment.PaymentDate)],
           ['Status',  `<span style="color:#dc2626;font-weight:700;">${esc(payment.Status)}</span>`],
         ],
@@ -339,8 +368,11 @@ async function sendRotationCompletedNotifications(rotationID) {
   const fmtDate = (d) => new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
 
   await Promise.allSettled(rows.recordset.map(r => {
-    const totalContributed = Number(r.ContributionAmount); // each member contributes once per rotation
-    const totalReceived    = Number(r.ContributionAmount) * r.PoolSize;
+    // With the N×N model: each member contributes once per collection event,
+    // and collects the full pot once. Net is zero (forced savings).
+    const perCycle         = Number(r.ContributionAmount);
+    const totalContributed = perCycle * r.PoolSize;
+    const totalReceived    = perCycle * r.PoolSize;
     const tplData = {
       accent:    'gold',
       heading:   'Rotation completed 🎉',
@@ -350,12 +382,13 @@ async function sendRotationCompletedNotifications(rotationID) {
         `Your rotation has just completed. Here's the summary.`,
       ],
       rows: [
-        ['Rotation',          `<strong>${esc(r.RotationName)}</strong>`],
+        ['Rotation',           `<strong>${esc(r.RotationName)}</strong>`],
         ['Members in rotation', `${r.PoolSize}`],
-        ['Started',           fmtDate(r.RotationStartDate)],
-        ['Ended',             fmtDate(r.RotationEndDate)],
-        ['Total contributed', `$${totalContributed.toLocaleString()}`],
-        ['Total received pot', `<span style="color:#16a34a;font-weight:700;">$${totalReceived.toLocaleString()}</span>`],
+        ['Started',            fmtDate(r.RotationStartDate)],
+        ['Ended',               fmtDate(r.RotationEndDate)],
+        ['Per-cycle contribution', `$${perCycle.toLocaleString()}`],
+        ['Total contributed',   `$${totalContributed.toLocaleString()} <span style="color:#6b7280;">(${r.PoolSize} × $${perCycle.toLocaleString()})</span>`],
+        ['Total received pot',  `<span style="color:#16a34a;font-weight:700;">$${totalReceived.toLocaleString()}</span>`],
       ],
       ctaLabel: 'Join another pool',
       ctaUrl:   `${baseUrl}/join-pool.html`,

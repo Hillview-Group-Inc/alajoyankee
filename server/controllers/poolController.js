@@ -339,43 +339,103 @@ async function sendEnrollmentNotification({ userID, poolID }) {
 }
 
 async function sendRotationStartNotifications(rotationID) {
-  const rows = await query(
-    `SELECT u.UserID, u.FirstName, u.Email, u.Phone,
-            r.RotationName, r.RotationStartDate, r.RotationEndDate,
-            rd.ContributionDue, rd.ContributionDueDate, rd.Rank
-     FROM RotationDetail rd
-     JOIN Rotation r ON r.RotationID = rd.RotationID
-     JOIN Users    u ON u.UserID = rd.UserID
-     WHERE rd.RotationID = @rID`,
+  // Per-member view: who they are + their N contributions + each contribution's recipient
+  const result = await query(
+    `SELECT
+       u.UserID, u.FirstName, u.Email, u.Phone,
+       r.RotationName, r.RotationStartDate, r.RotationEndDate,
+       cpe.Rank                  AS ContributorRank,
+       rdc.RotationDetailContributionID,
+       rdc.ContributionDue,
+       rdc.ContributionDueDate,
+       rd.Rank                   AS RecipientRank,
+       recipient.UserID          AS RecipientUserID,
+       recipient.FirstName + ' ' + recipient.LastName AS RecipientName,
+       (SELECT COUNT(*) FROM ContributionPoolEnrollment x WHERE x.PoolID = r.PoolID) AS PoolSize
+     FROM RotationDetailContribution rdc
+     JOIN RotationDetail rd ON rd.RotationDetailID = rdc.RotationDetailID
+     JOIN Rotation r        ON r.RotationID        = rdc.RotationID
+     JOIN Users    u        ON u.UserID            = rdc.UserID
+     JOIN ContributionPoolEnrollment cpe ON cpe.UserID = rdc.UserID AND cpe.PoolID = rdc.PoolID
+     JOIN Users    recipient ON recipient.UserID    = rd.UserID
+     WHERE rdc.RotationID = @rID
+     ORDER BY rdc.UserID, rdc.ContributionDueDate ASC`,
     { rID: { type: sql.Int, value: rotationID } }
   );
+
+  // Group rows by user
+  const byUser = new Map();
+  for (const row of result.recordset) {
+    if (!byUser.has(row.UserID)) {
+      byUser.set(row.UserID, {
+        user: { UserID: row.UserID, FirstName: row.FirstName, Email: row.Email, Phone: row.Phone },
+        rotation: {
+          RotationName:      row.RotationName,
+          RotationStartDate: row.RotationStartDate,
+          RotationEndDate:   row.RotationEndDate,
+          PoolSize:          row.PoolSize,
+          ContributorRank:   row.ContributorRank,
+        },
+        contributions: [],
+      });
+    }
+    byUser.get(row.UserID).contributions.push({
+      ContributionDue:     Number(row.ContributionDue),
+      ContributionDueDate: row.ContributionDueDate,
+      RecipientRank:       row.RecipientRank,
+      RecipientUserID:     row.RecipientUserID,
+      RecipientName:       row.RecipientName,
+    });
+  }
 
   const baseUrl = process.env.PUBLIC_URL || 'http://localhost:3000';
   const fmtDate = (d) => new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
 
-  await Promise.allSettled(rows.recordset.map(r => {
+  await Promise.allSettled([...byUser.values()].map(({ user, rotation, contributions }) => {
+    const totalCommitment = contributions.reduce((sum, c) => sum + c.ContributionDue, 0);
+    const yourCollection  = contributions.find(c => c.RecipientUserID === user.UserID);
+
+    // Build the schedule rows: one per collection date
+    const scheduleRows = contributions.map((c) => {
+      const isYourTurn = c.RecipientUserID === user.UserID;
+      const recipientLabel = isYourTurn
+        ? `<span style="color:#16a34a;font-weight:700;">YOU collect (rank #${c.RecipientRank})</span>`
+        : `${esc(c.RecipientName)} <span style="color:#6b7280;">(rank #${c.RecipientRank})</span>`;
+      return [
+        fmtDate(c.ContributionDueDate),
+        `$${c.ContributionDue.toLocaleString()} → ${recipientLabel}`,
+      ];
+    });
+
+    const headerRows = [
+      ['Rotation',          `<strong>${esc(rotation.RotationName)}</strong>`],
+      ['Rotation window',   `${fmtDate(rotation.RotationStartDate)} → ${fmtDate(rotation.RotationEndDate)}`],
+      ['Your rank',         `<strong>#${rotation.ContributorRank}</strong> of ${rotation.PoolSize}`],
+      ['Total commitment',  `<strong>$${totalCommitment.toLocaleString()}</strong> across ${contributions.length} payment${contributions.length === 1 ? '' : 's'}`],
+      ['You collect',       yourCollection
+        ? `<span style="color:#d4a017;font-weight:700;">${fmtDate(yourCollection.ContributionDueDate)}</span>`
+        : '—'],
+    ];
+
     const tplData = {
       accent:    'success',
       heading:   'Your rotation has started 🚀',
-      preheader: `${esc(r.RotationName)} · your due date is ${fmtDate(r.ContributionDueDate)}`,
-      greeting:  `Hi ${esc(r.FirstName)},`,
+      preheader: `${rotation.RotationName} · ${contributions.length} contributions ahead`,
+      greeting:  `Hi ${esc(user.FirstName)},`,
       intro: [
-        `The pool is full and your rotation has officially started. Here are the dates and amounts to keep in mind.`,
+        `The pool is full and your rotation has officially started. Every member contributes on each collection date — you'll make <strong>${contributions.length}</strong> payments total, and you collect the pot once on your turn.`,
       ],
       rows: [
-        ['Rotation',          `<strong>${esc(r.RotationName)}</strong>`],
-        ['Rotation start',    fmtDate(r.RotationStartDate)],
-        ['Rotation end',      fmtDate(r.RotationEndDate)],
-        ['Your rank',         `<strong>#${r.Rank}</strong>`],
-        ['Your contribution', `<strong>$${Number(r.ContributionDue).toLocaleString()}</strong>`],
-        ['Your due date',     `<span style="color:#d4a017;font-weight:600;">${fmtDate(r.ContributionDueDate)}</span>`],
+        ...headerRows,
+        ['─── Schedule ───', '<span style="color:#6b7280;">date · amount → recipient</span>'],
+        ...scheduleRows,
       ],
       ctaLabel: 'Submit a payment',
       ctaUrl:   `${baseUrl}/payments.html`,
-      closing:  `Submit your payment any time before your due date. An admin will verify it and the rotation moves forward.`,
+      closing:  `Submit each payment before its due date. An admin will verify it and the rotation moves forward.`,
     };
     return notifyUser({
-      user:    { userID: r.UserID, email: r.Email, phone: r.Phone },
+      user:    { userID: user.UserID, email: user.Email, phone: user.Phone },
       subject: 'Your rotation has started 🚀',
       message: renderText(tplData),
       html:    renderEmail(tplData),

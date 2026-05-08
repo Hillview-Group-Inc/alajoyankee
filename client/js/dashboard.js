@@ -182,7 +182,7 @@
         date:  new Date(p.PaymentDate),
         kind:  'payment',
         title: `Payment ${p.Status.toLowerCase()}`,
-        sub:   p.PoolSizeName,
+        sub:   p.RecipientName ? `${p.PoolSizeName} → ${p.RecipientName}` : p.PoolSizeName,
         amount: Number(p.Amount),
         status: p.Status,
       }));
@@ -190,7 +190,7 @@
         date:  new Date(r.ContributionDueDate),
         kind:  'due',
         title: `Contribution due`,
-        sub:   `${r.PoolSizeName} · rank #${r.Rank}`,
+        sub:   `${r.PoolSizeName} → ${r.RecipientName || ('rank #' + r.RecipientRank)}`,
         amount: Number(r.ContributionDue),
         status: 'Upcoming',
       }));

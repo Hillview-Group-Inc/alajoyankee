@@ -163,23 +163,52 @@ CREATE TABLE Rotation (
 );
 
 -- ══════════════════════════════════════════
--- RotationDetail
+-- RotationDetail — one row per "collection event" (rank → recipient)
+-- MemberCollectionDate is the date the rank-K member collects the pot.
 -- ══════════════════════════════════════════
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='RotationDetail' AND xtype='U')
 CREATE TABLE RotationDetail (
-  RotationDetailID    INT            IDENTITY(1,1) PRIMARY KEY,
-  RotationID          INT            NOT NULL,
-  PoolID              INT            NOT NULL,
-  UserID              INT            NOT NULL,
-  Rank                INT            NOT NULL,
-  ContributionDue     DECIMAL(18,2)  NOT NULL,
-  ContributionDueDate DATE           NOT NULL,
-  CreatedAt           DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
-  UpdatedAt           DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
+  RotationDetailID     INT            IDENTITY(1,1) PRIMARY KEY,
+  RotationID           INT            NOT NULL,
+  PoolID               INT            NOT NULL,
+  UserID               INT            NOT NULL,  -- the recipient (rank-K member who collects)
+  Rank                 INT            NOT NULL,
+  ContributionDue      DECIMAL(18,2)  NOT NULL,
+  MemberCollectionDate DATE           NOT NULL,
+  CreatedAt            DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
+  UpdatedAt            DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
   CONSTRAINT FK_RotationDetail_Rotation FOREIGN KEY (RotationID) REFERENCES Rotation(RotationID),
   CONSTRAINT FK_RotationDetail_Pool     FOREIGN KEY (PoolID)     REFERENCES ContributionPool(PoolID),
   CONSTRAINT FK_RotationDetail_User     FOREIGN KEY (UserID)     REFERENCES Users(UserID),
   CONSTRAINT UQ_RotationDetail UNIQUE (RotationID, UserID)
+);
+
+-- Migration: rename ContributionDueDate → MemberCollectionDate on existing installs
+IF EXISTS (SELECT 1 FROM sys.columns WHERE Name = N'ContributionDueDate' AND Object_ID = Object_ID(N'RotationDetail'))
+   AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE Name = N'MemberCollectionDate' AND Object_ID = Object_ID(N'RotationDetail'))
+   EXEC sp_rename 'RotationDetail.ContributionDueDate', 'MemberCollectionDate', 'COLUMN';
+
+-- ══════════════════════════════════════════
+-- RotationDetailContribution — one row per (collection event × member)
+-- N×N rows per rotation: each member contributes on every MemberCollectionDate.
+-- ══════════════════════════════════════════
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='RotationDetailContribution' AND xtype='U')
+CREATE TABLE RotationDetailContribution (
+  RotationDetailContributionID INT            IDENTITY(1,1) PRIMARY KEY,
+  RotationDetailID             INT            NOT NULL,
+  RotationID                   INT            NOT NULL,
+  PoolID                       INT            NOT NULL,
+  UserID                       INT            NOT NULL,  -- the contributor
+  Rank                         INT            NOT NULL,  -- the contributor's rank
+  ContributionDue              DECIMAL(18,2)  NOT NULL,
+  ContributionDueDate          DATE           NOT NULL,  -- equals parent RotationDetail.MemberCollectionDate
+  CreatedAt                    DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
+  UpdatedAt                    DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
+  CONSTRAINT FK_RDC_RotationDetail FOREIGN KEY (RotationDetailID) REFERENCES RotationDetail(RotationDetailID),
+  CONSTRAINT FK_RDC_Rotation       FOREIGN KEY (RotationID)       REFERENCES Rotation(RotationID),
+  CONSTRAINT FK_RDC_Pool           FOREIGN KEY (PoolID)           REFERENCES ContributionPool(PoolID),
+  CONSTRAINT FK_RDC_User           FOREIGN KEY (UserID)           REFERENCES Users(UserID),
+  CONSTRAINT UQ_RDC_DetailUser     UNIQUE (RotationDetailID, UserID)
 );
 
 -- ══════════════════════════════════════════
@@ -200,23 +229,32 @@ CREATE TABLE Notifications (
 );
 
 -- ══════════════════════════════════════════
--- Payments (table created now; controller wired in Phase 3)
+-- Payments — UserID is the payer; MemberToBePaid is the recipient (rank-K member)
 -- ══════════════════════════════════════════
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Payments' AND xtype='U')
 CREATE TABLE Payments (
-  PaymentID   INT            IDENTITY(1,1) PRIMARY KEY,
-  RotationID  INT            NOT NULL,
-  UserID      INT            NOT NULL,
-  Amount      DECIMAL(18,2)  NOT NULL,
-  PaymentDate DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
-  Status      NVARCHAR(20)   NOT NULL DEFAULT 'Pending',
-  VerifiedBy  INT            NULL,
-  CreatedAt   DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
-  CONSTRAINT FK_Payments_Rotation FOREIGN KEY (RotationID) REFERENCES Rotation(RotationID),
-  CONSTRAINT FK_Payments_User     FOREIGN KEY (UserID)     REFERENCES Users(UserID),
-  CONSTRAINT FK_Payments_Verifier FOREIGN KEY (VerifiedBy) REFERENCES Users(UserID),
+  PaymentID      INT            IDENTITY(1,1) PRIMARY KEY,
+  RotationID     INT            NOT NULL,
+  UserID         INT            NOT NULL,  -- the payer
+  MemberToBePaid INT            NULL,      -- the recipient (UserID of current ranked member)
+  Amount         DECIMAL(18,2)  NOT NULL,
+  PaymentDate    DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
+  Status         NVARCHAR(20)   NOT NULL DEFAULT 'Pending',
+  VerifiedBy     INT            NULL,
+  CreatedAt      DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
+  CONSTRAINT FK_Payments_Rotation  FOREIGN KEY (RotationID)     REFERENCES Rotation(RotationID),
+  CONSTRAINT FK_Payments_User      FOREIGN KEY (UserID)         REFERENCES Users(UserID),
+  CONSTRAINT FK_Payments_Recipient FOREIGN KEY (MemberToBePaid) REFERENCES Users(UserID),
+  CONSTRAINT FK_Payments_Verifier  FOREIGN KEY (VerifiedBy)     REFERENCES Users(UserID),
   CONSTRAINT CK_Payments_Status CHECK (Status IN ('Pending','Verified','Failed'))
 );
+
+-- Migration: add MemberToBePaid + FK on existing installs
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE Name = N'MemberToBePaid' AND Object_ID = Object_ID(N'Payments'))
+  ALTER TABLE Payments ADD MemberToBePaid INT NULL;
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_Payments_Recipient')
+  ALTER TABLE Payments ADD CONSTRAINT FK_Payments_Recipient FOREIGN KEY (MemberToBePaid) REFERENCES Users(UserID);
 
 -- ══════════════════════════════════════════
 -- PasswordResetTokens (table created now; routes wired in Phase 4)
@@ -249,7 +287,19 @@ IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_Enrollment_User' AND obj
   CREATE INDEX IX_Enrollment_User ON ContributionPoolEnrollment(UserID);
 
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_RotationDetail_User' AND object_id = OBJECT_ID('RotationDetail'))
-  CREATE INDEX IX_RotationDetail_User ON RotationDetail(UserID, ContributionDueDate);
+  CREATE INDEX IX_RotationDetail_User ON RotationDetail(UserID, MemberCollectionDate);
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_RDC_UserDate' AND object_id = OBJECT_ID('RotationDetailContribution'))
+  CREATE INDEX IX_RDC_UserDate ON RotationDetailContribution(UserID, ContributionDueDate);
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_RDC_Rotation' AND object_id = OBJECT_ID('RotationDetailContribution'))
+  CREATE INDEX IX_RDC_Rotation ON RotationDetailContribution(RotationID);
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_Payments_Rotation' AND object_id = OBJECT_ID('Payments'))
+  CREATE INDEX IX_Payments_Rotation ON Payments(RotationID, Status);
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_Payments_Recipient' AND object_id = OBJECT_ID('Payments'))
+  CREATE INDEX IX_Payments_Recipient ON Payments(MemberToBePaid);
 
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_PRT_UserID' AND object_id = OBJECT_ID('PasswordResetTokens'))
   CREATE INDEX IX_PRT_UserID ON PasswordResetTokens(UserID);
@@ -261,7 +311,7 @@ IF NOT EXISTS (SELECT 1 FROM PoolSize WHERE PoolSizeValue = 2)
   INSERT INTO PoolSize (PoolSizeName, PoolSizeValue) VALUES (N'Mini Circle (2 members)', 2);
 
 IF NOT EXISTS (SELECT 1 FROM PoolSize WHERE PoolSizeValue = 3)
-  INSERT INTO PoolSize (PoolSizeName, PoolSizeValue) VALUES (N'Small Circle (3 members)', 3);
+  INSERT INTO PoolSize (PoolSizeName, PoolSizeValue) VALUES (N'Midi Circle (3 members)', 3);
    
 IF NOT EXISTS (SELECT 1 FROM PoolSize WHERE PoolSizeValue = 5)
   INSERT INTO PoolSize (PoolSizeName, PoolSizeValue) VALUES (N'Small Circle (5 members)', 5);
