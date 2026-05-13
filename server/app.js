@@ -14,9 +14,14 @@ const morgan       = require('morgan');
 const rateLimit    = require('express-rate-limit');
 const path         = require('path');
 
-const authRoutes    = require('./routes/auth');
-const userRoutes    = require('./routes/users');
-const contactRoutes = require('./routes/contact');
+const authRoutes     = require('./routes/auth');
+const userRoutes     = require('./routes/users');
+const contactRoutes  = require('./routes/contact');
+const poolRoutes     = require('./routes/pools');
+const rotationRoutes = require('./routes/rotations');
+const paymentRoutes  = require('./routes/payments');
+const adminRoutes        = require('./routes/admin');
+const notificationRoutes = require('./routes/notifications');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 
 const app  = express();
@@ -101,10 +106,15 @@ app.get('/health', (req, res) => {
 /* ════════════════════════════════════════════
    API ROUTES
    ════════════════════════════════════════════ */
-app.use('/api/auth',     authRoutes);
-app.use('/api/users',    userRoutes);
-app.use('/api/contact',  contactRoutes);
-app.use('/api/messages', contactRoutes); // alias: GET /api/messages → contactRoutes
+app.use('/api/auth',      authRoutes);
+app.use('/api/users',     userRoutes);
+app.use('/api/contact',   contactRoutes);
+app.use('/api/messages',  contactRoutes); // alias: GET /api/messages → contactRoutes
+app.use('/api/pools',     poolRoutes);
+app.use('/api/rotations', rotationRoutes);
+app.use('/api/payments',  paymentRoutes);
+app.use('/api/admin',         adminRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 /* ════════════════════════════════════════════
    SERVE STATIC FRONTEND

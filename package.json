@@ -4,9 +4,10 @@
   "description": "Alajo Yankee – Node.js/Express backend with SQL Server, JWT auth, and bcrypt",
   "main": "server/app.js",
   "scripts": {
-    "start": "node server/app.js",
-    "dev": "nodemon server/app.js",
-    "db:init": "node server/config/initDb.js"
+    "start": "node --use-system-ca server/app.js",
+    "dev": "nodemon --exec \"node --use-system-ca\" server/app.js",
+    "db:init": "node --use-system-ca server/config/initDb.js",
+    "db:wipe-runtime": "node --use-system-ca server/config/wipeRuntime.js"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -21,7 +22,8 @@
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "mssql": "^7.2.0"
+    "mssql": "^7.2.0",
+    "nodemailer": "^8.0.7"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

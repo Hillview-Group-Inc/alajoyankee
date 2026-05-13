@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Join a Pool | Alajo Yankee</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231a6b3c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='Georgia' font-weight='800'>A</text></svg>" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/forms.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+<div class="page-loader" id="pageLoader"><div class="loader-ring"></div></div>
+<div id="toast-container" aria-live="polite"></div>
+
+<nav class="navbar scrolled" id="navbar" style="background:white;box-shadow:0 1px 0 var(--color-border);">
+  <div class="nav-inner">
+    <a href="dashboard.html" class="nav-logo"><div class="nav-logo-icon">A</div>Alajo Yankee</a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="btn btn-outline btn-sm">← Back to Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<main class="auth-page" style="padding-top:120px;">
+  <div class="auth-card" style="max-width:640px;">
+    <div class="auth-header">
+      <span class="section-label" style="margin-bottom:12px;">New Enrollment</span>
+      <h2>Join a Contribution Pool</h2>
+      <p>Pick your pool size, schedule, and contribution amount. We'll match you with an open pool — or start a new one.</p>
+    </div>
+
+    <div id="enrollAlert" style="margin-bottom:20px;display:none;" role="alert"></div>
+
+    <form id="enrollForm" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="poolSizeID">Pool Size <span class="required">*</span></label>
+        <select id="poolSizeID" name="poolSizeID" class="form-control" required>
+          <option value="">Loading...</option>
+        </select>
+        <span class="form-hint">How many members will share this rotation.</span>
+        <span class="form-error" id="poolSizeID-error" style="display:none;"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="rotationScheduleID">Rotation Schedule <span class="required">*</span></label>
+        <select id="rotationScheduleID" name="rotationScheduleID" class="form-control" required>
+          <option value="">Loading...</option>
+        </select>
+        <span class="form-hint">How often each rank receives a payout.</span>
+        <span class="form-error" id="rotationScheduleID-error" style="display:none;"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="contributionAmountID">Contribution Amount <span class="required">*</span></label>
+        <select id="contributionAmountID" name="contributionAmountID" class="form-control" required>
+          <option value="">Loading...</option>
+        </select>
+        <span class="form-hint">What each member pays per cycle.</span>
+        <span class="form-error" id="contributionAmountID-error" style="display:none;"></span>
+      </div>
+
+      <div id="enrollPreview" style="background:var(--color-primary-subtle);border-radius:var(--radius-md);padding:16px;margin-bottom:20px;display:none;">
+        <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--color-primary);margin-bottom:8px;">Summary</div>
+        <div id="enrollPreviewBody" style="font-size:.95rem;line-height:1.6;"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" id="enrollBtn">
+        <span id="enrollBtnText">Enroll Me</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Active pools list -->
+  <div class="auth-card" style="max-width:640px;margin-top:32px;">
+    <h3 style="margin-bottom:6px;">Your Active Pools</h3>
+    <p style="color:var(--color-text-muted);font-size:.9rem;margin-bottom:20px;">Pools you're currently enrolled in.</p>
+    <div id="myPools">
+      <div style="text-align:center;padding:24px;color:var(--color-text-muted);">
+        <div class="loader-ring" style="margin:0 auto 12px;"></div>
+        Loading...
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/main.js"></script>
+<script src="js/join-pool.js"></script>
+</body>
+</html>
