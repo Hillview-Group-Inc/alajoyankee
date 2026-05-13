@@ -1,240 +1,377 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Contact Alajo Yankee – Reach our team for support, partnerships, or consulting inquiries." />
-  <title>Contact | Alajo Yankee</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231a6b3c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='Georgia' font-weight='800'>A</text></svg>" />
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/forms.css" />
-  <link rel="stylesheet" href="css/responsive.css" />
-</head>
-<body>
-<div class="page-loader" id="pageLoader"><div class="loader-ring"></div></div>
-<div id="toast-container" aria-live="polite"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Contact Alajo Yankee – Reach our team for support, partnerships, or consulting inquiries."
+    />
+    <title>Contact | Alajo Yankee</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231a6b3c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='Georgia' font-weight='800'>A</text></svg>"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div class="page-loader" id="pageLoader">
+      <div class="loader-ring"></div>
+    </div>
+    <div id="toast-container" aria-live="polite"></div>
 
-<nav class="navbar" id="navbar">
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">A</div>Alajo Yankee</a>
-    <div class="nav-links">
-      <a href="index.html"    class="nav-link">Home</a>
-      <a href="about.html"    class="nav-link">About</a>
+    <nav class="navbar" id="navbar">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo"
+          ><div class="nav-logo-icon">A</div>
+          Alajo Yankee</a
+        >
+        <div class="nav-links">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="about.html" class="nav-link">About</a>
+          <a href="services.html" class="nav-link">Services</a>
+          <a href="contact.html" class="nav-link active">Contact</a>
+          <div class="nav-cta flex gap-sm">
+            <a href="signin.html" class="btn btn-outline btn-sm">Sign In</a>
+            <a href="signup.html" class="btn btn-primary btn-sm">Get Started</a>
+          </div>
+        </div>
+        <button
+          class="nav-toggle"
+          id="navToggle"
+          aria-expanded="false"
+          aria-controls="navDrawer"
+          aria-label="Toggle navigation"
+        >
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+    <div class="nav-drawer" id="navDrawer">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="about.html" class="nav-link">About</a>
       <a href="services.html" class="nav-link">Services</a>
-      <a href="contact.html"  class="nav-link active">Contact</a>
-      <div class="nav-cta flex gap-sm">
-        <a href="signin.html" class="btn btn-outline btn-sm">Sign In</a>
-        <a href="signup.html" class="btn btn-primary btn-sm">Get Started</a>
+      <a href="contact.html" class="nav-link active">Contact</a>
+      <div class="nav-cta flex flex-col gap-sm" style="margin-top: 8px">
+        <a href="signin.html" class="btn btn-outline">Sign In</a>
+        <a href="signup.html" class="btn btn-primary">Get Started</a>
       </div>
     </div>
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navDrawer" aria-label="Toggle navigation">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
-<div class="nav-drawer" id="navDrawer">
-  <a href="index.html"    class="nav-link">Home</a>
-  <a href="about.html"    class="nav-link">About</a>
-  <a href="services.html" class="nav-link">Services</a>
-  <a href="contact.html"  class="nav-link active">Contact</a>
-  <div class="nav-cta flex flex-col gap-sm" style="margin-top:8px;">
-    <a href="signin.html" class="btn btn-outline">Sign In</a>
-    <a href="signup.html" class="btn btn-primary">Get Started</a>
-  </div>
-</div>
 
-<div class="page-hero">
-  <div class="container">
-    <span class="section-label gold" style="margin-bottom:16px;display:inline-block;">Get In Touch</span>
-    <h1>Contact Us</h1>
-    <p>Have questions, ideas, or need support? Our community team is ready to help.</p>
-  </div>
-</div>
+    <div class="page-hero">
+      <div class="container">
+        <span
+          class="section-label gold"
+          style="margin-bottom: 16px; display: inline-block"
+          >Get In Touch</span
+        >
+        <h1>Contact Us</h1>
+        <p>
+          Have questions, ideas, or need support? Our community team is ready to
+          help.
+        </p>
+      </div>
+    </div>
 
-<!-- CONTACT SECTION -->
-<section style="background:var(--color-bg-alt);">
-  <div class="container">
-    <div class="contact-wrap">
-      <!-- Info -->
-      <div class="contact-info">
-        <span class="section-label" style="margin-bottom:16px;">Reach Out</span>
-        <h2>We'd Love to Hear From You</h2>
-        <p>Whether you're curious about our services, want to start a savings group, or are interested in partnering with us — we're here.</p>
-        <div class="contact-info-items">
-          <div class="contact-info-item">
-            <div class="contact-info-icon">📍</div>
-            <div class="contact-info-text">
-              <strong>Our Office</strong>
-              <span>1234 Community Drive, Suite 200<br/>Houston, TX 77002</span>
+    <!-- CONTACT SECTION -->
+    <section style="background: var(--color-bg-alt)">
+      <div class="container">
+        <div class="contact-wrap">
+          <!-- Info -->
+          <div class="contact-info">
+            <span class="section-label" style="margin-bottom: 16px"
+              >Reach Out</span
+            >
+            <h2>We'd Love to Hear From You</h2>
+            <p>
+              Whether you're curious about our services, want to start a savings
+              group, or are interested in partnering with us - we're here.
+            </p>
+            <div class="contact-info-items">
+              <div class="contact-info-item">
+                <div class="contact-info-icon">📍</div>
+                <div class="contact-info-text">
+                  <strong>Our Office</strong>
+                  <span
+                    >701 E.Franklin St., Suite 105 1605<br />Richmond, VA
+                    23219</span
+                  >
+                </div>
+              </div>
+              <div class="contact-info-item">
+                <div class="contact-info-icon">📧</div>
+                <div class="contact-info-text">
+                  <strong>Email Us</strong>
+                  <span>service@hillviewgroupinc.com</span>
+                </div>
+              </div>
+              <div class="contact-info-item">
+                <div class="contact-info-icon">📞</div>
+                <div class="contact-info-text">
+                  <strong>Call Us</strong>
+                  <span>+1 (804) 319-0887<br />Mon–Fri, 9am – 6pm EST</span>
+                </div>
+              </div>
+              <div class="contact-info-item">
+                <div class="contact-info-icon">🌐</div>
+                <div class="contact-info-text">
+                  <strong>Follow Us</strong>
+                  <span>@alajoyankee on all platforms</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Accordion -->
+            <div style="margin-top: 48px">
+              <h4 style="margin-bottom: 24px">Common Questions</h4>
+              <div id="faqAccordion">
+                <div class="accordion-item">
+                  <div class="accordion-header" onclick="toggleAccordion(this)">
+                    How do I start a savings group?
+                    <div class="accordion-icon">+</div>
+                  </div>
+                  <div class="accordion-body">
+                    <p>
+                      Create a free account, then navigate to "Create Group" in
+                      your dashboard. Invite members by email, set your
+                      contribution amount and schedule, and you're live in
+                      minutes.
+                    </p>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <div class="accordion-header" onclick="toggleAccordion(this)">
+                    Is my money secure on the platform?
+                    <div class="accordion-icon">+</div>
+                  </div>
+                  <div class="accordion-body">
+                    <p>
+                      Yes. We use bank-level encryption, JWT authentication,
+                      bcrypt password hashing, and secure SQL Server
+                      infrastructure. Your financial data is never sold or
+                      shared.
+                    </p>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <div class="accordion-header" onclick="toggleAccordion(this)">
+                    How long does account setup take?
+                    <div class="accordion-icon">+</div>
+                  </div>
+                  <div class="accordion-body">
+                    <p>
+                      Account creation takes under 2 minutes. You can start
+                      inviting members and managing your savings group
+                      immediately after email verification.
+                    </p>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <div class="accordion-header" onclick="toggleAccordion(this)">
+                    Do you offer group consulting?
+                    <div class="accordion-icon">+</div>
+                  </div>
+                  <div class="accordion-body">
+                    <p>
+                      Yes! Our consulting service helps established community
+                      groups formalize their structure, establish governance,
+                      and migrate to our digital platform seamlessly.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="contact-info-item">
-            <div class="contact-info-icon">📧</div>
-            <div class="contact-info-text">
-              <strong>Email Us</strong>
-              <span>hello@alajoyankee.com</span>
+
+          <!-- Form -->
+          <div class="contact-form-card" id="contact-form-card">
+            <h3>Send Us a Message</h3>
+            <div id="contactFormSuccess" style="display: none" role="alert">
+              <div class="alert alert-success">
+                <span class="alert-icon">✅</span>
+                <div>
+                  <strong>Message Sent!</strong><br />
+                  Thank you for reaching out. Our team will get back to you
+                  within 1–2 business days.
+                </div>
+              </div>
+            </div>
+            <form id="contactForm" novalidate>
+              <div class="form-group">
+                <label class="form-label" for="contact-name">
+                  Full Name <span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-icon">👤</span>
+                  <input
+                    type="text"
+                    id="contact-name"
+                    name="name"
+                    class="form-control"
+                    placeholder="e.g. Kwame Asante"
+                    required
+                    autocomplete="name"
+                  />
+                </div>
+                <span
+                  class="form-error"
+                  id="name-error"
+                  style="display: none"
+                ></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="contact-email">
+                  Email Address <span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-icon">✉️</span>
+                  <input
+                    type="email"
+                    id="contact-email"
+                    name="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                    required
+                    autocomplete="email"
+                  />
+                </div>
+                <span
+                  class="form-error"
+                  id="email-error"
+                  style="display: none"
+                ></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="contact-phone">
+                  Phone Number
+                </label>
+                <div class="input-group">
+                  <span class="input-icon">📞</span>
+                  <input
+                    type="tel"
+                    id="contact-phone"
+                    name="phone"
+                    class="form-control"
+                    placeholder="+1 (555) 000-0000"
+                    autocomplete="tel"
+                  />
+                </div>
+                <span
+                  class="form-error"
+                  id="phone-error"
+                  style="display: none"
+                ></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="contact-message">
+                  Message <span class="required">*</span>
+                </label>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  class="form-control"
+                  placeholder="Tell us how we can help you..."
+                  required
+                  rows="5"
+                  minlength="20"
+                ></textarea>
+                <span
+                  class="form-error"
+                  id="message-error"
+                  style="display: none"
+                ></span>
+              </div>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="width: 100%; justify-content: center; padding: 15px"
+                id="contactSubmitBtn"
+              >
+                <span id="contactBtnText">Send Message</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="container" style="position: relative; z-index: 1">
+        <h2>Ready to Build Wealth Together?</h2>
+        <p style="max-width: 480px; margin: 16px auto 40px">
+          Create your free account and join a community that has your back —
+          just like family should.
+        </p>
+        <div class="cta-buttons">
+          <a href="signup.html" class="btn btn-secondary btn-xl"
+            >Get Started Free</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="index.html" class="nav-logo"
+              ><div class="nav-logo-icon">A</div>
+              Alajo Yankee</a
+            >
+            <p>
+              Building community wealth through trusted African savings
+              traditions — modernized for the diaspora.
+            </p>
+            <div class="footer-social">
+              <a href="#" class="social-btn" aria-label="Facebook">f</a>
+              <a href="#" class="social-btn" aria-label="Twitter/X">𝕏</a>
+              <a href="#" class="social-btn" aria-label="Instagram">📷</a>
+              <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
             </div>
           </div>
-          <div class="contact-info-item">
-            <div class="contact-info-icon">📞</div>
-            <div class="contact-info-text">
-              <strong>Call Us</strong>
-              <span>+1 (713) 555-0190<br/>Mon–Fri, 9am – 6pm CST</span>
+          <div class="footer-col">
+            <h5>Platform</h5>
+            <div class="footer-links">
+              <a href="index.html">Home</a><a href="about.html">About</a
+              ><a href="services.html">Services</a
+              ><a href="contact.html">Contact</a>
             </div>
           </div>
-          <div class="contact-info-item">
-            <div class="contact-info-icon">🌐</div>
-            <div class="contact-info-text">
-              <strong>Follow Us</strong>
-              <span>@alajoyankee on all platforms</span>
+          <div class="footer-col">
+            <h5>Account</h5>
+            <div class="footer-links">
+              <a href="signup.html">Create Account</a
+              ><a href="signin.html">Sign In</a
+              ><a href="dashboard.html">Dashboard</a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h5>Legal</h5>
+            <div class="footer-links">
+              <a href="#">Privacy Policy</a><a href="#">Terms of Service</a
+              ><a href="#">Security</a>
             </div>
           </div>
         </div>
-
-        <!-- FAQ Accordion -->
-        <div style="margin-top:48px;">
-          <h4 style="margin-bottom:24px;">Common Questions</h4>
-          <div id="faqAccordion">
-            <div class="accordion-item">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                How do I start a savings group?
-                <div class="accordion-icon">+</div>
-              </div>
-              <div class="accordion-body">
-                <p>Create a free account, then navigate to "Create Group" in your dashboard. Invite members by email, set your contribution amount and schedule, and you're live in minutes.</p>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                Is my money secure on the platform?
-                <div class="accordion-icon">+</div>
-              </div>
-              <div class="accordion-body">
-                <p>Yes. We use bank-level encryption, JWT authentication, bcrypt password hashing, and secure SQL Server infrastructure. Your financial data is never sold or shared.</p>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                How long does account setup take?
-                <div class="accordion-icon">+</div>
-              </div>
-              <div class="accordion-body">
-                <p>Account creation takes under 2 minutes. You can start inviting members and managing your savings group immediately after email verification.</p>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                Do you offer group consulting?
-                <div class="accordion-icon">+</div>
-              </div>
-              <div class="accordion-body">
-                <p>Yes! Our consulting service helps established community groups formalize their structure, establish governance, and migrate to our digital platform seamlessly.</p>
-              </div>
-            </div>
+      </div>
+      <div style="border-top: 1px solid rgba(255, 255, 255, 0.08)">
+        <div class="container">
+          <div class="footer-bottom">
+            <span
+              >&copy; <span id="year"></span> Alajo Yankee. All rights
+              reserved.</span
+            >
+            <span>Made with ❤️ for the African diaspora community</span>
           </div>
         </div>
       </div>
+    </footer>
 
-      <!-- Form -->
-      <div class="contact-form-card" id="contact-form-card">
-        <h3>Send Us a Message</h3>
-        <div id="contactFormSuccess" style="display:none;" role="alert">
-          <div class="alert alert-success">
-            <span class="alert-icon">✅</span>
-            <div>
-              <strong>Message Sent!</strong><br/>
-              Thank you for reaching out. Our team will get back to you within 1–2 business days.
-            </div>
-          </div>
-        </div>
-        <form id="contactForm" novalidate>
-          <div class="form-group">
-            <label class="form-label" for="contact-name">
-              Full Name <span class="required">*</span>
-            </label>
-            <div class="input-group">
-              <span class="input-icon">👤</span>
-              <input type="text" id="contact-name" name="name" class="form-control" placeholder="e.g. Kwame Asante" required autocomplete="name" />
-            </div>
-            <span class="form-error" id="name-error" style="display:none;"></span>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="contact-email">
-              Email Address <span class="required">*</span>
-            </label>
-            <div class="input-group">
-              <span class="input-icon">✉️</span>
-              <input type="email" id="contact-email" name="email" class="form-control" placeholder="you@example.com" required autocomplete="email" />
-            </div>
-            <span class="form-error" id="email-error" style="display:none;"></span>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="contact-phone">
-              Phone Number
-            </label>
-            <div class="input-group">
-              <span class="input-icon">📞</span>
-              <input type="tel" id="contact-phone" name="phone" class="form-control" placeholder="+1 (555) 000-0000" autocomplete="tel" />
-            </div>
-            <span class="form-error" id="phone-error" style="display:none;"></span>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="contact-message">
-              Message <span class="required">*</span>
-            </label>
-            <textarea id="contact-message" name="message" class="form-control" placeholder="Tell us how we can help you..." required rows="5" minlength="20"></textarea>
-            <span class="form-error" id="message-error" style="display:none;"></span>
-          </div>
-          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:15px;" id="contactSubmitBtn">
-            <span id="contactBtnText">Send Message</span>
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="cta-section">
-  <div class="container" style="position:relative;z-index:1;">
-    <h2>Ready to Build Wealth Together?</h2>
-    <p style="max-width:480px;margin:16px auto 40px;">Create your free account and join a community that has your back — just like family should.</p>
-    <div class="cta-buttons">
-      <a href="signup.html" class="btn btn-secondary btn-xl">Get Started Free</a>
-    </div>
-  </div>
-</section>
-
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="index.html" class="nav-logo"><div class="nav-logo-icon">A</div>Alajo Yankee</a>
-        <p>Building community wealth through trusted African savings traditions — modernized for the diaspora.</p>
-        <div class="footer-social">
-          <a href="#" class="social-btn" aria-label="Facebook">f</a>
-          <a href="#" class="social-btn" aria-label="Twitter/X">𝕏</a>
-          <a href="#" class="social-btn" aria-label="Instagram">📷</a>
-          <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
-        </div>
-      </div>
-      <div class="footer-col"><h5>Platform</h5><div class="footer-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="services.html">Services</a><a href="contact.html">Contact</a></div></div>
-      <div class="footer-col"><h5>Account</h5><div class="footer-links"><a href="signup.html">Create Account</a><a href="signin.html">Sign In</a><a href="dashboard.html">Dashboard</a></div></div>
-      <div class="footer-col"><h5>Legal</h5><div class="footer-links"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Security</a></div></div>
-    </div>
-  </div>
-  <div style="border-top:1px solid rgba(255,255,255,.08);">
-    <div class="container">
-      <div class="footer-bottom">
-        <span>&copy; <span id="year"></span> Alajo Yankee. All rights reserved.</span>
-        <span>Made with ❤️ for the African diaspora community</span>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<script src="js/main.js"></script>
-<script src="js/contact.js"></script>
-</body>
+    <script src="js/main.js"></script>
+    <script src="js/contact.js"></script>
+  </body>
 </html>
