@@ -48,21 +48,42 @@ app.use(helmet({
 // CORS
 const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3000')
   .split(',')
-  .map(o => o.trim());
+  .map(o => o.trim())
+  .filter(Boolean);
 
-app.use(cors({
+// Same-origin requests (frontend served from this same Express app) carry an
+// Origin header but don't need a CORS check. We compare Origin's host to the
+// request's Host header so the deployed Azure hostname doesn't need to be
+// hard-coded in CORS_ORIGINS.
+function isSameOrigin(req) {
+  const origin = req.headers.origin;
+  if (!origin) return false;
+  try {
+    return new URL(origin).host === req.headers.host;
+  } catch (_) {
+    return false;
+  }
+}
+
+const corsMiddleware = cors({
   origin(origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, Postman)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error(`CORS: origin "${origin}" not allowed.`));
+      const err = new Error(`CORS: origin "${origin}" not allowed.`);
+      err.status = 403;
+      callback(err);
     }
   },
   credentials: true,
   methods:     ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+});
+
+app.use((req, res, next) => {
+  if (isSameOrigin(req)) return next();
+  return corsMiddleware(req, res, next);
+});
 
 /* ════════════════════════════════════════════
    RATE LIMITING
