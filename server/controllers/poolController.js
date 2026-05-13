@@ -3,13 +3,13 @@
    PRD §4.1 — Pool enrollment with race-safe transaction
    ============================================ */
 
-'use strict';
+"use strict";
 
-const { validationResult } = require('express-validator');
-const { sql, query, txQuery, withTransaction } = require('../config/db');
-const { createRotationForPool } = require('../services/rotationEngine');
-const { notifyUser } = require('../services/notificationService');
-const { renderEmail, renderText, esc } = require('../services/emailTemplates');
+const { validationResult } = require("express-validator");
+const { sql, query, txQuery, withTransaction } = require("../config/db");
+const { createRotationForPool } = require("../services/rotationEngine");
+const { notifyUser } = require("../services/notificationService");
+const { renderEmail, renderText, esc } = require("../services/emailTemplates");
 
 /* ══════════════════════════════════════════
    GET /api/pools/options
@@ -29,7 +29,7 @@ async function getOptions(req, res, next) {
     res.json({
       poolSizes: sizes.recordset,
       schedules: schedules.recordset,
-      amounts:   amounts.recordset,
+      amounts: amounts.recordset,
     });
   } catch (err) {
     next(err);
@@ -43,17 +43,18 @@ async function getOptions(req, res, next) {
 async function enroll(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ message: 'Validation failed', errors: errors.array() });
+    return res
+      .status(422)
+      .json({ message: "Validation failed", errors: errors.array() });
   }
 
-  const userID                = req.user.userID;
-  const poolSizeID            = parseInt(req.body.poolSizeID, 10);
-  const rotationScheduleID    = parseInt(req.body.rotationScheduleID, 10);
-  const contributionAmountID  = parseInt(req.body.contributionAmountID, 10);
+  const userID = req.user.userID;
+  const poolSizeID = parseInt(req.body.poolSizeID, 10);
+  const rotationScheduleID = parseInt(req.body.rotationScheduleID, 10);
+  const contributionAmountID = parseInt(req.body.contributionAmountID, 10);
 
   try {
     const result = await withTransaction(async (tx) => {
-
       // 1. Validate the lookup IDs are real & active, and grab the values we need
       const lookups = await txQuery(
         tx,
@@ -71,10 +72,10 @@ async function enroll(req, res, next) {
           psID: { type: sql.Int, value: poolSizeID },
           rsID: { type: sql.Int, value: rotationScheduleID },
           caID: { type: sql.Int, value: contributionAmountID },
-        }
+        },
       );
       if (!lookups.recordset.length) {
-        const e = new Error('Invalid pool configuration.');
+        const e = new Error("Invalid pool configuration.");
         e.status = 400;
         throw e;
       }
@@ -93,13 +94,15 @@ async function enroll(req, res, next) {
            AND cp.Status IN ('open','filled')`,
         {
           userID: { type: sql.Int, value: userID },
-          psID:   { type: sql.Int, value: poolSizeID },
-          rsID:   { type: sql.Int, value: rotationScheduleID },
-          caID:   { type: sql.Int, value: contributionAmountID },
-        }
+          psID: { type: sql.Int, value: poolSizeID },
+          rsID: { type: sql.Int, value: rotationScheduleID },
+          caID: { type: sql.Int, value: contributionAmountID },
+        },
       );
       if (dup.recordset.length > 0) {
-        const e = new Error('You are already enrolled in a pool with these settings.');
+        const e = new Error(
+          "You are already enrolled in a pool with these settings.",
+        );
         e.status = 409;
         throw e;
       }
@@ -117,7 +120,7 @@ async function enroll(req, res, next) {
           psID: { type: sql.Int, value: poolSizeID },
           rsID: { type: sql.Int, value: rotationScheduleID },
           caID: { type: sql.Int, value: contributionAmountID },
-        }
+        },
       );
 
       if (found.recordset.length > 0) {
@@ -134,7 +137,7 @@ async function enroll(req, res, next) {
             psID: { type: sql.Int, value: poolSizeID },
             rsID: { type: sql.Int, value: rotationScheduleID },
             caID: { type: sql.Int, value: contributionAmountID },
-          }
+          },
         );
         poolID = created.recordset[0].PoolID;
       }
@@ -143,13 +146,15 @@ async function enroll(req, res, next) {
       const rankRow = await txQuery(
         tx,
         `SELECT COUNT(*) AS Cnt FROM ContributionPoolEnrollment WHERE PoolID = @poolID`,
-        { poolID: { type: sql.Int, value: poolID } }
+        { poolID: { type: sql.Int, value: poolID } },
       );
       const nextRank = rankRow.recordset[0].Cnt + 1;
 
       // Defensive — should never trigger thanks to SERIALIZABLE, but worth the guard
       if (nextRank > PoolSizeValue) {
-        const e = new Error('This pool just filled. Please try enrolling again — a new pool will be created.');
+        const e = new Error(
+          "This pool just filled. Please try enrolling again, a new pool will be created.",
+        );
         e.status = 409;
         throw e;
       }
@@ -162,8 +167,8 @@ async function enroll(req, res, next) {
         {
           poolID: { type: sql.Int, value: poolID },
           userID: { type: sql.Int, value: userID },
-          rank:   { type: sql.Int, value: nextRank },
-        }
+          rank: { type: sql.Int, value: nextRank },
+        },
       );
 
       // 7. If pool just filled, mark filled + create rotation (PRD §4.1 step 6, §4.2)
@@ -175,7 +180,7 @@ async function enroll(req, res, next) {
           `UPDATE ContributionPool
              SET Status = 'filled', FilledDate = SYSUTCDATETIME(), UpdatedAt = SYSUTCDATETIME()
            WHERE PoolID = @poolID`,
-          { poolID: { type: sql.Int, value: poolID } }
+          { poolID: { type: sql.Int, value: poolID } },
         );
 
         // Fetch all enrollments to seed RotationDetail rows
@@ -183,9 +188,12 @@ async function enroll(req, res, next) {
           tx,
           `SELECT UserID, Rank FROM ContributionPoolEnrollment
            WHERE PoolID = @poolID ORDER BY Rank`,
-          { poolID: { type: sql.Int, value: poolID } }
+          { poolID: { type: sql.Int, value: poolID } },
         );
-        const enrollments = rows.recordset.map(r => ({ userID: r.UserID, rank: r.Rank }));
+        const enrollments = rows.recordset.map((r) => ({
+          userID: r.UserID,
+          rank: r.Rank,
+        }));
 
         const rotation = await createRotationForPool(tx, {
           poolID,
@@ -196,9 +204,9 @@ async function enroll(req, res, next) {
         });
         rotationID = rotation.rotationID;
         rotationDates = {
-          startDate:            rotation.startDate,
+          startDate: rotation.startDate,
           lastContributionDate: rotation.lastContributionDate,
-          endDate:              rotation.endDate,
+          endDate: rotation.endDate,
         };
       }
 
@@ -213,22 +221,23 @@ async function enroll(req, res, next) {
     });
 
     // PRD §6.2 — pool-enrollment notification (to the new member)
-    sendEnrollmentNotification({ userID, poolID: result.poolID })
-      .catch(err => console.warn('Pool-enrollment notification failed:', err.message));
+    sendEnrollmentNotification({ userID, poolID: result.poolID }).catch((err) =>
+      console.warn("Pool-enrollment notification failed:", err.message),
+    );
 
     // PRD §6.3 — rotation-start notifications (broadcast to all members)
     if (result.filled && result.rotationID) {
-      sendRotationStartNotifications(result.rotationID)
-        .catch(err => console.warn('Rotation-start notifications failed:', err.message));
+      sendRotationStartNotifications(result.rotationID).catch((err) =>
+        console.warn("Rotation-start notifications failed:", err.message),
+      );
     }
 
     res.status(201).json({
       message: result.filled
-        ? 'You\'re enrolled — and the pool just filled. The rotation has started!'
+        ? "You're enrolled, and the pool just filled. The rotation has started!"
         : `You're enrolled. Position #${result.rank} of ${result.poolSize}.`,
       ...result,
     });
-
   } catch (err) {
     if (err.status) {
       return res.status(err.status).json({ message: err.message });
@@ -272,7 +281,7 @@ async function getMyActivePools(req, res, next) {
        WHERE cpe.UserID = @userID
          AND cp.Status IN ('open','filled')
        ORDER BY cpe.CreatedAt DESC`,
-      { userID: { type: sql.Int, value: req.user.userID } }
+      { userID: { type: sql.Int, value: req.user.userID } },
     );
 
     res.json({ pools: result.recordset });
@@ -300,41 +309,51 @@ async function sendEnrollmentNotification({ userID, poolID }) {
     {
       uID: { type: sql.Int, value: userID },
       pID: { type: sql.Int, value: poolID },
-    }
+    },
   );
   if (!rows.recordset.length) return;
   const r = rows.recordset[0];
 
-  const baseUrl = process.env.PUBLIC_URL || 'http://localhost:3000';
-  const filledLabel = r.MemberCount === r.PoolSizeValue
-    ? `<span style="color:#16a34a;font-weight:600;">${r.MemberCount}/${r.PoolSizeValue} (filled)</span>`
-    : `${r.MemberCount}/${r.PoolSizeValue} (waiting for ${r.PoolSizeValue - r.MemberCount} more)`;
+  const baseUrl = process.env.PUBLIC_URL || "http://localhost:3000";
+  const filledLabel =
+    r.MemberCount === r.PoolSizeValue
+      ? `<span style="color:#16a34a;font-weight:600;">${r.MemberCount}/${r.PoolSizeValue} (filled)</span>`
+      : `${r.MemberCount}/${r.PoolSizeValue} (waiting for ${r.PoolSizeValue - r.MemberCount} more)`;
 
   const tplData = {
-    accent:    'primary',
-    heading:   `You're enrolled — ${r.PoolSizeName}`,
+    accent: "primary",
+    heading: `You're enrolled: ${r.PoolSizeName}`,
     preheader: `Position #${r.Rank} of ${r.PoolSizeValue}`,
-    greeting:  `Hi ${esc(r.FirstName)},`,
+    greeting: `Hi ${esc(r.FirstName)},`,
     intro: [
       `You've joined a contribution pool. We'll notify you again as soon as the pool fills and the rotation starts.`,
     ],
     rows: [
-      ['Pool size',           `${esc(r.PoolSizeName)} <span style="color:#6b7280;">(${r.PoolSizeValue} members)</span>`],
-      ['Rotation schedule',   `${esc(r.RotationScheduleName)} <span style="color:#6b7280;">· every ${r.ValueInDays} days</span>`],
-      ['Contribution amount', `<strong>$${Number(r.Amount).toLocaleString()}</strong>`],
-      ['Your rank',           `<strong>#${r.Rank}</strong> of ${r.PoolSizeValue}`],
-      ['Members so far',      filledLabel],
+      [
+        "Pool size",
+        `${esc(r.PoolSizeName)} <span style="color:#6b7280;">(${r.PoolSizeValue} members)</span>`,
+      ],
+      [
+        "Rotation schedule",
+        `${esc(r.RotationScheduleName)} <span style="color:#6b7280;">· every ${r.ValueInDays} days</span>`,
+      ],
+      [
+        "Contribution amount",
+        `<strong>$${Number(r.Amount).toLocaleString()}</strong>`,
+      ],
+      ["Your rank", `<strong>#${r.Rank}</strong> of ${r.PoolSizeValue}`],
+      ["Members so far", filledLabel],
     ],
-    ctaLabel: 'View dashboard',
-    ctaUrl:   `${baseUrl}/dashboard.html`,
-    closing:  `Tip: position #${r.Rank} means you'll receive your payout after ${r.Rank - 1} other ${r.Rank - 1 === 1 ? 'member has' : 'members have'} taken their turn.`,
+    ctaLabel: "View dashboard",
+    ctaUrl: `${baseUrl}/dashboard.html`,
+    closing: `Tip: position #${r.Rank} means you'll receive your payout after ${r.Rank - 1} other ${r.Rank - 1 === 1 ? "member has" : "members have"} taken their turn.`,
   };
 
   await notifyUser({
-    user:    { userID: r.UserID, email: r.Email, phone: r.Phone },
-    subject: `You're enrolled — ${r.PoolSizeName}`,
+    user: { userID: r.UserID, email: r.Email, phone: r.Phone },
+    subject: `You're enrolled: ${r.PoolSizeName}`,
     message: renderText(tplData),
-    html:    renderEmail(tplData),
+    html: renderEmail(tplData),
   });
 }
 
@@ -360,7 +379,7 @@ async function sendRotationStartNotifications(rotationID) {
      JOIN Users    recipient ON recipient.UserID    = rd.UserID
      WHERE rdc.RotationID = @rID
      ORDER BY rdc.UserID, rdc.ContributionDueDate ASC`,
-    { rID: { type: sql.Int, value: rotationID } }
+    { rID: { type: sql.Int, value: rotationID } },
   );
 
   // Group rows by user
@@ -368,79 +387,111 @@ async function sendRotationStartNotifications(rotationID) {
   for (const row of result.recordset) {
     if (!byUser.has(row.UserID)) {
       byUser.set(row.UserID, {
-        user: { UserID: row.UserID, FirstName: row.FirstName, Email: row.Email, Phone: row.Phone },
+        user: {
+          UserID: row.UserID,
+          FirstName: row.FirstName,
+          Email: row.Email,
+          Phone: row.Phone,
+        },
         rotation: {
-          RotationName:      row.RotationName,
+          RotationName: row.RotationName,
           RotationStartDate: row.RotationStartDate,
-          RotationEndDate:   row.RotationEndDate,
-          PoolSize:          row.PoolSize,
-          ContributorRank:   row.ContributorRank,
+          RotationEndDate: row.RotationEndDate,
+          PoolSize: row.PoolSize,
+          ContributorRank: row.ContributorRank,
         },
         contributions: [],
       });
     }
     byUser.get(row.UserID).contributions.push({
-      ContributionDue:     Number(row.ContributionDue),
+      ContributionDue: Number(row.ContributionDue),
       ContributionDueDate: row.ContributionDueDate,
-      RecipientRank:       row.RecipientRank,
-      RecipientUserID:     row.RecipientUserID,
-      RecipientName:       row.RecipientName,
+      RecipientRank: row.RecipientRank,
+      RecipientUserID: row.RecipientUserID,
+      RecipientName: row.RecipientName,
     });
   }
 
-  const baseUrl = process.env.PUBLIC_URL || 'http://localhost:3000';
-  const fmtDate = (d) => new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const baseUrl = process.env.PUBLIC_URL || "http://localhost:3000";
+  const fmtDate = (d) =>
+    new Date(d).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
 
-  await Promise.allSettled([...byUser.values()].map(({ user, rotation, contributions }) => {
-    const totalCommitment = contributions.reduce((sum, c) => sum + c.ContributionDue, 0);
-    const yourCollection  = contributions.find(c => c.RecipientUserID === user.UserID);
+  await Promise.allSettled(
+    [...byUser.values()].map(({ user, rotation, contributions }) => {
+      const totalCommitment = contributions.reduce(
+        (sum, c) => sum + c.ContributionDue,
+        0,
+      );
+      const yourCollection = contributions.find(
+        (c) => c.RecipientUserID === user.UserID,
+      );
 
-    // Build the schedule rows: one per collection date
-    const scheduleRows = contributions.map((c) => {
-      const isYourTurn = c.RecipientUserID === user.UserID;
-      const recipientLabel = isYourTurn
-        ? `<span style="color:#16a34a;font-weight:700;">YOU collect (rank #${c.RecipientRank})</span>`
-        : `${esc(c.RecipientName)} <span style="color:#6b7280;">(rank #${c.RecipientRank})</span>`;
-      return [
-        fmtDate(c.ContributionDueDate),
-        `$${c.ContributionDue.toLocaleString()} → ${recipientLabel}`,
+      // Build the schedule rows: one per collection date
+      const scheduleRows = contributions.map((c) => {
+        const isYourTurn = c.RecipientUserID === user.UserID;
+        const recipientLabel = isYourTurn
+          ? `<span style="color:#16a34a;font-weight:700;">YOU collect (rank #${c.RecipientRank})</span>`
+          : `${esc(c.RecipientName)} <span style="color:#6b7280;">(rank #${c.RecipientRank})</span>`;
+        return [
+          fmtDate(c.ContributionDueDate),
+          `$${c.ContributionDue.toLocaleString()} → ${recipientLabel}`,
+        ];
+      });
+
+      const headerRows = [
+        ["Rotation", `<strong>${esc(rotation.RotationName)}</strong>`],
+        [
+          "Rotation window",
+          `${fmtDate(rotation.RotationStartDate)} → ${fmtDate(rotation.RotationEndDate)}`,
+        ],
+        [
+          "Your rank",
+          `<strong>#${rotation.ContributorRank}</strong> of ${rotation.PoolSize}`,
+        ],
+        [
+          "Total commitment",
+          `<strong>$${totalCommitment.toLocaleString()}</strong> across ${contributions.length} payment${contributions.length === 1 ? "" : "s"}`,
+        ],
+        [
+          "You collect",
+          yourCollection
+            ? `<span style="color:#d4a017;font-weight:700;">${fmtDate(yourCollection.ContributionDueDate)}</span>`
+            : "—",
+        ],
       ];
-    });
 
-    const headerRows = [
-      ['Rotation',          `<strong>${esc(rotation.RotationName)}</strong>`],
-      ['Rotation window',   `${fmtDate(rotation.RotationStartDate)} → ${fmtDate(rotation.RotationEndDate)}`],
-      ['Your rank',         `<strong>#${rotation.ContributorRank}</strong> of ${rotation.PoolSize}`],
-      ['Total commitment',  `<strong>$${totalCommitment.toLocaleString()}</strong> across ${contributions.length} payment${contributions.length === 1 ? '' : 's'}`],
-      ['You collect',       yourCollection
-        ? `<span style="color:#d4a017;font-weight:700;">${fmtDate(yourCollection.ContributionDueDate)}</span>`
-        : '—'],
-    ];
-
-    const tplData = {
-      accent:    'success',
-      heading:   'Your rotation has started 🚀',
-      preheader: `${rotation.RotationName} · ${contributions.length} contributions ahead`,
-      greeting:  `Hi ${esc(user.FirstName)},`,
-      intro: [
-        `The pool is full and your rotation has officially started. Every member contributes on each collection date — you'll make <strong>${contributions.length}</strong> payments total, and you collect the pot once on your turn.`,
-      ],
-      rows: [
-        ...headerRows,
-        ['─── Schedule ───', '<span style="color:#6b7280;">date · amount → recipient</span>'],
-        ...scheduleRows,
-      ],
-      ctaLabel: 'Submit a payment',
-      ctaUrl:   `${baseUrl}/payments.html`,
-      closing:  `Submit each payment before its due date. An admin will verify it and the rotation moves forward.`,
-    };
-    return notifyUser({
-      user:    { userID: user.UserID, email: user.Email, phone: user.Phone },
-      subject: 'Your rotation has started 🚀',
-      message: renderText(tplData),
-      html:    renderEmail(tplData),
-    });
-  }));
+      const tplData = {
+        accent: "success",
+        heading: "Your rotation has started 🚀",
+        preheader: `${rotation.RotationName} · ${contributions.length} contributions ahead`,
+        greeting: `Hi ${esc(user.FirstName)},`,
+        intro: [
+          `The pool is full and your rotation has officially started. Every member contributes on each collection date, you'll make <strong>${contributions.length}</strong> payments total, and you collect the pot once on your turn.`,
+        ],
+        rows: [
+          ...headerRows,
+          [
+            "─── Schedule ───",
+            '<span style="color:#6b7280;">date · amount → recipient</span>',
+          ],
+          ...scheduleRows,
+        ],
+        ctaLabel: "Submit a payment",
+        ctaUrl: `${baseUrl}/payments.html`,
+        closing: `Submit each payment before its due date. An admin will verify it and the rotation moves forward.`,
+      };
+      return notifyUser({
+        user: { userID: user.UserID, email: user.Email, phone: user.Phone },
+        subject: "Your rotation has started 🚀",
+        message: renderText(tplData),
+        html: renderEmail(tplData),
+      });
+    }),
+  );
 }
 
 module.exports = { getOptions, enroll, getMyActivePools };
