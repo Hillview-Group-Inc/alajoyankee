@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="How Alajo Yankee works — sign up, pick your pool, wait for it to fill, and collect your payout. Community savings made simple."
+    />
+    <title>How It Works | Alajo Yankee</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231a6b3c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='Georgia' font-weight='800'>A</text></svg>"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <style>
+      /* ── Page-specific styles ── */
+      .hiw-hero {
+        background: linear-gradient(
+          145deg,
+          #0a2e17 0%,
+          #134f2d 45%,
+          #1a6b3c 100%
+        );
+        padding: 140px 0 96px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+      }
+      .hiw-hero::before {
+        content: "";
+        position: absolute;
+        top: -10%;
+        right: -8%;
+        width: 540px;
+        height: 540px;
+        background: radial-gradient(
+          circle,
+          rgba(212, 160, 23, 0.14) 0%,
+          transparent 65%
+        );
+        border-radius: 50%;
+        pointer-events: none;
+      }
+      .hiw-hero::after {
+        content: "";
+        position: absolute;
+        bottom: -15%;
+        left: -10%;
+        width: 480px;
+        height: 480px;
+        background: radial-gradient(
+          circle,
+          rgba(26, 145, 82, 0.18) 0%,
+          transparent 65%
+        );
+        border-radius: 50%;
+        pointer-events: none;
+      }
+      .hiw-hero .container { position: relative; z-index: 1; }
+      .hiw-hero h1 {
+        color: white;
+        font-size: clamp(2.4rem, 5vw, 3.8rem);
+        max-width: 880px;
+        margin: 18px auto 20px;
+      }
+      .hiw-hero p.lead {
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 1.18rem;
+        max-width: 640px;
+        margin: 0 auto 36px;
+      }
+      .hiw-hero .cta-buttons { margin-top: 8px; }
+
+      /* Flow strip under hero copy */
+      .hiw-flow {
+        margin-top: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .hiw-flow-chip {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(10px);
+        border-radius: var(--radius-pill);
+        padding: 10px 22px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .hiw-flow-chip .num {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--color-secondary);
+        color: white;
+        font-size: 0.78rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+      }
+      .hiw-flow-arrow {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 1.4rem;
+        line-height: 1;
+      }
+
+      /* 4-step cards */
+      .step-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        position: relative;
+      }
+      .step-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 36px 28px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--color-border);
+        position: relative;
+        transition: transform var(--transition), box-shadow var(--transition);
+        display: flex;
+        flex-direction: column;
+      }
+      .step-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-lg);
+      }
+      .step-card.alt {
+        background: linear-gradient(
+          155deg,
+          var(--color-secondary-subtle),
+          #fffaec
+        );
+        border-color: #f3e2a8;
+      }
+      .step-number {
+        font-family: var(--font-display);
+        font-size: 2.6rem;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--color-primary-subtle);
+        -webkit-text-stroke: 2px var(--color-primary);
+        margin-bottom: 18px;
+      }
+      .step-card.alt .step-number {
+        color: var(--color-secondary-subtle);
+        -webkit-text-stroke: 2px var(--color-secondary-dark);
+      }
+      .step-icon {
+        font-size: 2rem;
+        margin-bottom: 14px;
+        line-height: 1;
+      }
+      .step-card h3 {
+        margin-bottom: 10px;
+        font-size: 1.25rem;
+      }
+      .step-card p {
+        font-size: 0.95rem;
+        margin-bottom: 16px;
+      }
+      .step-list {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 16px;
+        border-top: 1px dashed var(--color-border);
+      }
+      .step-list .item {
+        font-size: 0.88rem;
+        color: var(--color-text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .step-list .item::before {
+        content: "✓";
+        color: var(--color-primary);
+        font-weight: 800;
+      }
+      .step-card.alt .step-list .item::before {
+        color: var(--color-secondary-dark);
+      }
+      .step-pill {
+        align-self: flex-start;
+        background: var(--color-primary);
+        color: white;
+        font-weight: 700;
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 6px 14px;
+        border-radius: var(--radius-pill);
+        margin-bottom: 14px;
+      }
+      .step-card.alt .step-pill {
+        background: var(--color-secondary-dark);
+      }
+      .step-arrow {
+        position: absolute;
+        top: 50%;
+        right: -22px;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: white;
+        border: 1.5px solid var(--color-border);
+        color: var(--color-primary);
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        z-index: 2;
+        box-shadow: var(--shadow-sm);
+      }
+      .step-card:last-child .step-arrow { display: none; }
+
+      /* Rinse and repeat block */
+      .repeat-block {
+        background: linear-gradient(
+          135deg,
+          var(--color-primary-subtle) 0%,
+          #ffffff 60%
+        );
+        border-radius: var(--radius-xl);
+        padding: 64px 56px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--color-primary-subtle);
+      }
+      .repeat-icon {
+        font-size: 3rem;
+        margin-bottom: 18px;
+        display: inline-block;
+        animation: spinSlow 8s linear infinite;
+        transform-origin: center;
+      }
+      @keyframes spinSlow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .repeat-tagline {
+        display: inline-flex;
+        gap: 24px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 24px;
+        color: var(--color-primary);
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+      .repeat-tagline span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .repeat-tagline span::before {
+        content: "•";
+        color: var(--color-secondary);
+      }
+
+      /* Group onboarding gold banner */
+      .group-banner {
+        background: linear-gradient(
+          135deg,
+          var(--color-secondary-dark) 0%,
+          var(--color-secondary) 60%,
+          var(--color-secondary-light) 100%
+        );
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+        color: white;
+      }
+      .group-banner::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at 80% 50%,
+          rgba(255, 255, 255, 0.18) 0%,
+          transparent 60%
+        );
+        pointer-events: none;
+      }
+      .group-banner .container { position: relative; z-index: 1; }
+      .group-banner-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 48px;
+        align-items: center;
+      }
+      .group-banner h2 {
+        color: white;
+        margin-bottom: 16px;
+        font-size: clamp(1.9rem, 4vw, 2.6rem);
+      }
+      .group-banner p.lead {
+        color: rgba(255, 255, 255, 0.92);
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 28px;
+        max-width: 560px;
+      }
+      .group-contact {
+        background: rgba(255, 255, 255, 0.16);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+      }
+      .group-contact h4 {
+        color: white;
+        font-family: var(--font-body);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 18px;
+      }
+      .group-contact-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+        color: white;
+        font-weight: 600;
+      }
+      .group-contact-item:last-child { border-bottom: none; }
+      .group-contact-item .ico {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.22);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1rem;
+      }
+      .group-contact-item a {
+        color: white;
+        font-size: 0.95rem;
+        text-decoration: none;
+      }
+      .group-contact-item a:hover { text-decoration: underline; }
+      .group-banner .btn-on-gold {
+        background: var(--color-primary-dark);
+        color: white;
+        border-color: var(--color-primary-dark);
+      }
+      .group-banner .btn-on-gold:hover {
+        background: #08321b;
+        border-color: #08321b;
+        transform: translateY(-1px);
+      }
+
+      /* Glossary cards */
+      .glossary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+      .glossary-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 32px 28px;
+        border: 1px solid var(--color-border);
+        box-shadow: var(--shadow-sm);
+        transition: transform var(--transition), box-shadow var(--transition);
+      }
+      .glossary-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+      }
+      .glossary-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--radius-md);
+        background: var(--color-primary-subtle);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        margin-bottom: 18px;
+      }
+      .glossary-card:nth-child(2) .glossary-icon {
+        background: var(--color-secondary-subtle);
+      }
+      .glossary-card:nth-child(3) .glossary-icon {
+        background: #fef2f2;
+      }
+      .glossary-card:nth-child(4) .glossary-icon {
+        background: #eef2ff;
+      }
+      .glossary-card h4 {
+        margin-bottom: 8px;
+        font-size: 1.15rem;
+      }
+      .glossary-card p {
+        font-size: 0.93rem;
+        margin-bottom: 12px;
+      }
+      .glossary-card ul {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .glossary-card li {
+        font-size: 0.88rem;
+        color: var(--color-text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .glossary-card li::before {
+        content: "›";
+        color: var(--color-primary);
+        font-weight: 800;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .step-grid { grid-template-columns: repeat(2, 1fr); }
+        .step-arrow { display: none !important; }
+        .glossary-grid { grid-template-columns: repeat(2, 1fr); }
+        .group-banner-grid { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 640px) {
+        .hiw-hero { padding: 110px 0 72px; }
+        .step-grid { grid-template-columns: 1fr; }
+        .glossary-grid { grid-template-columns: 1fr; }
+        .repeat-block { padding: 48px 24px; }
+        .hiw-flow { gap: 10px; }
+        .hiw-flow-chip { font-size: 0.85rem; padding: 8px 14px; }
+      }
+
+    </style>
+  </head>
+  <body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+      <div class="loader-ring"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" aria-live="polite"></div>
+
+    <!-- ══════════ NAVBAR ══════════ -->
+    <nav
+      class="navbar hero-mode"
+      id="navbar"
+      role="navigation"
+      aria-label="Main navigation"
+    >
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo" aria-label="Alajo Yankee Home">
+          <div class="nav-logo-icon" aria-hidden="true">A</div>
+          Alajo Yankee
+        </a>
+        <div class="nav-links" role="menubar">
+          <a href="index.html" class="nav-link" role="menuitem">Home</a>
+          <a href="about.html" class="nav-link" role="menuitem">About</a>
+          <a href="services.html" class="nav-link" role="menuitem">Services</a>
+          <a href="how-it-works.html" class="nav-link active" role="menuitem"
+            >How It Works</a
+          >
+          <a href="contact.html" class="nav-link" role="menuitem">Contact</a>
+          <div class="nav-cta flex gap-sm">
+            <a href="signin.html" class="btn btn-outline-white btn-sm"
+              >Sign In</a
+            >
+            <a href="signup.html" class="btn btn-secondary btn-sm"
+              >Get Started</a
+            >
+          </div>
+        </div>
+        <button
+          class="nav-toggle"
+          id="navToggle"
+          aria-expanded="false"
+          aria-controls="navDrawer"
+          aria-label="Toggle navigation"
+        >
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Drawer -->
+    <div class="nav-drawer" id="navDrawer" role="menu">
+      <a href="index.html" class="nav-link" role="menuitem">Home</a>
+      <a href="about.html" class="nav-link" role="menuitem">About</a>
+      <a href="services.html" class="nav-link" role="menuitem">Services</a>
+      <a href="how-it-works.html" class="nav-link active" role="menuitem"
+        >How It Works</a
+      >
+      <a href="contact.html" class="nav-link" role="menuitem">Contact</a>
+      <div class="nav-cta flex flex-col gap-sm" style="margin-top: 8px">
+        <a href="signin.html" class="btn btn-outline">Sign In</a>
+        <a href="signup.html" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+
+    <!-- ══════════ HERO ══════════ -->
+    <section class="hiw-hero" id="hero">
+      <div class="container">
+        <span class="badge badge-gold" style="font-size: 0.85rem">
+          ✦ How It Works
+        </span>
+        <h1>How To Work Alajo Yankee Like A Boss 💰🔥</h1>
+        <p class="lead">
+          Four simple steps to join a pool, grow your savings, and collect your
+          payout — community style.
+        </p>
+        <div
+          class="cta-buttons"
+          style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap"
+        >
+          <a href="signup.html" class="btn btn-secondary btn-xl"
+            >Get Started Free</a
+          >
+          <a href="join-pool.html" class="btn btn-outline-white btn-xl"
+            >Join a Pool</a
+          >
+        </div>
+
+        <!-- Visual flow strip -->
+        <div class="hiw-flow" aria-hidden="true">
+          <span class="hiw-flow-chip"
+            ><span class="num">1</span> Sign Up</span
+          >
+          <span class="hiw-flow-arrow">→</span>
+          <span class="hiw-flow-chip"
+            ><span class="num">2</span> Join Pool</span
+          >
+          <span class="hiw-flow-arrow">→</span>
+          <span class="hiw-flow-chip"
+            ><span class="num">3</span> Wait</span
+          >
+          <span class="hiw-flow-arrow">→</span>
+          <span class="hiw-flow-chip"
+            ><span class="num">4</span> Get Paid</span
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ 4-STEP PROCESS ══════════ -->
+    <section style="background: white" id="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">The 4-Step Process</span>
+          <h2>From Sign-Up to Payday</h2>
+          <p>
+            No spreadsheets. No guesswork. Just a clear, transparent path from
+            the moment you join to the day your pot lands.
+          </p>
+        </div>
+
+        <div class="step-grid">
+          <!-- Step 1 -->
+          <div class="step-card">
+            <span class="step-pill">Step 1</span>
+            <div class="step-number">01</div>
+            <div class="step-icon" aria-hidden="true">👋</div>
+            <h3>Join the Family</h3>
+            <p>
+              Sign up in less than 2 minutes and become part of the Alajo Yankee
+              community.
+            </p>
+            <div class="step-list">
+              <div class="item">Create your profile</div>
+              <div class="item">Verify your email</div>
+              <div class="item">Ready to roll</div>
+            </div>
+            <div class="step-arrow" aria-hidden="true">›</div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-card alt">
+            <span class="step-pill">Step 2</span>
+            <div class="step-number">02</div>
+            <div class="step-icon" aria-hidden="true">🎯</div>
+            <h3>Pick Your Perfect Pool</h3>
+            <p>
+              Choose your pool size, schedule, and contribution amount — then
+              hit <strong>Enroll Me</strong>. Our matching engine finds your
+              pool or creates one just for you.
+            </p>
+            <div class="step-list">
+              <div class="item">Pool size</div>
+              <div class="item">Rotation schedule</div>
+              <div class="item">Contribution amount</div>
+            </div>
+            <div class="step-arrow" aria-hidden="true">›</div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-card">
+            <span class="step-pill">Step 3</span>
+            <div class="step-number">03</div>
+            <div class="step-icon" aria-hidden="true">☕</div>
+            <h3>Chill While We Fill It</h3>
+            <p>
+              We enroll more members until your pool is full. Go walk the dog.
+              Knit a scarf. Make a sandwich.
+            </p>
+            <div class="step-list">
+              <div class="item">Status: Filling up…</div>
+              <div class="item">Live progress in dashboard</div>
+              <div class="item">Email + SMS updates</div>
+            </div>
+            <div class="step-arrow" aria-hidden="true">›</div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="step-card alt">
+            <span class="step-pill">Step 4</span>
+            <div class="step-number">04</div>
+            <div class="step-icon" aria-hidden="true">🚀</div>
+            <h3>Time to Build Wealth</h3>
+            <p>
+              When your pool fills, we send your full rotation schedule. Manage
+              everything from your Payments tab.
+            </p>
+            <div class="step-list">
+              <div class="item">Your rank</div>
+              <div class="item">Contribution dates</div>
+              <div class="item">Collection date</div>
+              <div class="item">Total commitment</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ RINSE & REPEAT ══════════ -->
+    <section style="background: var(--color-bg-alt)" id="repeat">
+      <div class="container">
+        <div class="repeat-block">
+          <div class="repeat-icon" aria-hidden="true">🔄</div>
+          <span
+            class="section-label gold"
+            style="margin-bottom: 18px; display: inline-block"
+            >Rinse & Repeat</span
+          >
+          <h2 style="margin-bottom: 14px">
+            Finished Your Rotation? Do It Again
+          </h2>
+          <p style="max-width: 560px; margin: 0 auto 8px; font-size: 1.05rem">
+            Join another pool and keep building wealth the smart way.
+          </p>
+          <div class="repeat-tagline">
+            <span>Easy</span>
+            <span>Transparent</span>
+            <span>Accountable</span>
+            <span>Modern</span>
+          </div>
+          <div
+            style="margin-top: 32px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap"
+          >
+            <a href="join-pool.html" class="btn btn-primary btn-lg"
+              >Join Another Pool</a
+            >
+            <a href="dashboard.html" class="btn btn-outline btn-lg"
+              >Go to Dashboard</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ GROUP ONBOARDING BANNER ══════════ -->
+    <section class="group-banner" id="group-onboarding">
+      <div class="container">
+          <div class="group-banner-grid">
+            <div>
+              <span
+                class="badge"
+                style="
+                  background: rgba(255, 255, 255, 0.22);
+                  color: white;
+                  margin-bottom: 18px;
+                "
+              >
+                🤝 Already have your own group?
+              </span>
+              <h2>Got Your Own Crew? Bring Them Over 👥</h2>
+              <p class="lead">
+                Already know your members, ranking, and contribution amounts?
+                We'll onboard your entire group into Alajo Yankee — quickly and
+                easily — so you can keep saving without skipping a beat.
+              </p>
+              <div style="display: flex; gap: 14px; flex-wrap: wrap">
+                <a href="contact.html" class="btn btn-on-gold btn-lg"
+                  >Let's Onboard Your Group</a
+                >
+                <a
+                  href="contact.html"
+                  class="btn btn-outline-white btn-lg"
+                  style="border-color: rgba(255, 255, 255, 0.7)"
+                  >Contact Us</a
+                >
+              </div>
+            </div>
+            <div class="group-contact">
+              <h4>Reach Us Directly</h4>
+              <div class="group-contact-item">
+                <div class="ico" aria-hidden="true">📞</div>
+                <a href="tel:+18043190887">804-319-0887</a>
+              </div>
+              <div class="group-contact-item">
+                <div class="ico" aria-hidden="true">✉️</div>
+                <a href="mailto:service@hillviewgroupinc.com"
+                  >service@hillviewgroupinc.com</a
+                >
+              </div>
+              <div class="group-contact-item">
+                <div class="ico" aria-hidden="true">📝</div>
+                <a href="contact.html">Use the contact form</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+
+    <!-- ══════════ GLOSSARY ══════════ -->
+    <section style="background: white" id="glossary">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Our Language</span>
+          <h2>Our Language on Alajo Yankee</h2>
+          <p>
+            A quick guide to the four words you'll see most often around here.
+          </p>
+        </div>
+
+        <div class="glossary-grid">
+          <div class="glossary-card">
+            <div class="glossary-icon" aria-hidden="true">👥</div>
+            <h4>Pool</h4>
+            <p>The number of people contributing together.</p>
+          </div>
+
+          <div class="glossary-card">
+            <div class="glossary-icon" aria-hidden="true">📅</div>
+            <h4>Rotation Schedule</h4>
+            <p>How often payouts happen.</p>
+            <ul>
+              <li>Weekly</li>
+              <li>Bi-Weekly</li>
+              <li>Monthly</li>
+            </ul>
+          </div>
+
+          <div class="glossary-card">
+            <div class="glossary-icon" aria-hidden="true">💵</div>
+            <h4>Contribution Amount</h4>
+            <p>How much each member contributes every cycle.</p>
+          </div>
+
+          <div class="glossary-card">
+            <div class="glossary-icon" aria-hidden="true">🔄</div>
+            <h4>Rotation</h4>
+            <p>The full savings cycle from start date to final payout.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ FINAL CTA ══════════ -->
+    <section class="cta-section" id="cta">
+      <div class="container" style="position: relative; z-index: 1">
+        <span
+          class="section-label gold"
+          style="margin-bottom: 20px; display: inline-block"
+          >Ready When You Are</span
+        >
+        <h2 style="max-width: 640px; margin: 0 auto 16px">
+          Ready to Build Wealth<br />the Community Way?
+        </h2>
+        <p style="max-width: 540px; margin: 0 auto 40px">
+          Join thousands of members using the wisdom of our ancestors with the
+          convenience of modern technology.
+        </p>
+        <div class="cta-buttons">
+          <a href="signup.html" class="btn btn-secondary btn-xl"
+            >Get Started Free</a
+          >
+          <a href="contact.html" class="btn btn-outline-white btn-xl"
+            >Contact Us</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ FOOTER ══════════ -->
+    <footer class="footer" role="contentinfo">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="index.html" class="nav-logo">
+              <div class="nav-logo-icon">A</div>
+              Alajo Yankee
+            </a>
+            <p>
+              Building community wealth through the trusted African tradition of
+              collective savings and contributions — modernized for the
+              diaspora.
+            </p>
+            <div class="footer-social">
+              <a href="#" class="social-btn" aria-label="Facebook">f</a>
+              <a href="#" class="social-btn" aria-label="Twitter/X">𝕏</a>
+              <a href="#" class="social-btn" aria-label="Instagram">📷</a>
+              <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h5>Platform</h5>
+            <div class="footer-links">
+              <a href="index.html">Home</a>
+              <a href="about.html">About Us</a>
+              <a href="services.html">Services</a>
+              <a href="how-it-works.html">How It Works</a>
+              <a href="contact.html">Contact</a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h5>Account</h5>
+            <div class="footer-links">
+              <a href="signup.html">Create Account</a>
+              <a href="signin.html">Sign In</a>
+              <a href="dashboard.html">Dashboard</a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h5>Legal</h5>
+            <div class="footer-links">
+              <a href="#">Privacy Policy</a>
+              <a href="#">Terms of Service</a>
+              <a href="#">Cookie Policy</a>
+              <a href="#">Security</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="border-top: 1px solid rgba(255, 255, 255, 0.08)">
+        <div class="container">
+          <div class="footer-bottom">
+            <span
+              >&copy; <span id="year"></span> Alajo Yankee. All rights
+              reserved.</span
+            >
+            <span>Made with ❤️ for the African diaspora community</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>

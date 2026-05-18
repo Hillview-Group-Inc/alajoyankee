@@ -43,6 +43,9 @@
           <a href="index.html" class="nav-link active" role="menuitem">Home</a>
           <a href="about.html" class="nav-link" role="menuitem">About</a>
           <a href="services.html" class="nav-link" role="menuitem">Services</a>
+          <a href="how-it-works.html" class="nav-link" role="menuitem"
+            >How It Works</a
+          >
           <a href="contact.html" class="nav-link" role="menuitem">Contact</a>
           <div class="nav-cta flex gap-sm">
             <a href="signin.html" class="btn btn-outline-white btn-sm"
@@ -70,6 +73,9 @@
       <a href="index.html" class="nav-link active" role="menuitem">Home</a>
       <a href="about.html" class="nav-link" role="menuitem">About</a>
       <a href="services.html" class="nav-link" role="menuitem">Services</a>
+      <a href="how-it-works.html" class="nav-link" role="menuitem"
+        >How It Works</a
+      >
       <a href="contact.html" class="nav-link" role="menuitem">Contact</a>
       <div class="nav-cta flex flex-col gap-sm" style="margin-top: 8px">
         <a href="signin.html" class="btn btn-outline">Sign In</a>
@@ -209,6 +215,34 @@
                 >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
+              </a>
+              <a
+                href="how-it-works.html"
+                class="btn btn-xl btn-how-it-works"
+                style="
+                  background: rgba(255, 255, 255, 0.12);
+                  color: white;
+                  border: 2px solid rgba(255, 255, 255, 0.35);
+                  backdrop-filter: blur(8px);
+                  font-weight: 700;
+                "
+              >
+                <span
+                  aria-hidden="true"
+                  style="
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    background: var(--color-secondary);
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.95rem;
+                    margin-right: 4px;
+                  "
+                  >▶</span
+                >
+                See How It Works
               </a>
               <a href="about.html" class="btn btn-outline-white btn-xl"
                 >Learn Our Story</a
@@ -889,6 +923,12 @@
           opacity: 1;
           transform: translateX(0);
         }
+      }
+      .btn-how-it-works:hover {
+        background: rgba(255, 255, 255, 0.22) !important;
+        border-color: rgba(255, 255, 255, 0.6) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
       }
     </style>
 
