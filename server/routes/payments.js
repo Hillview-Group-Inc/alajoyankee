@@ -2,15 +2,19 @@
    server/routes/payments.js
    POST /api/payments/submit   — member submits a contribution payment
    GET  /api/payments/mine     — member's payment history
-   GET  /api/payments/pending  — admin: pending payments queue
-   POST /api/payments/verify   — admin: mark Verified or Failed
+   GET  /api/payments/pending  — admin or coordinator: pending payments queue (scoped)
+   POST /api/payments/verify   — admin or coordinator: mark Verified or Failed (scoped)
    ============================================ */
 
 'use strict';
 
 const express  = require('express');
 const { body } = require('express-validator');
-const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const {
+  authenticateToken,
+  loadCoordinatorScope,
+  requireAdminOrCoordinator,
+} = require('../middleware/auth');
 const { submit, getMine, getPending, verify } = require('../controllers/paymentController');
 
 const router = express.Router();
@@ -33,9 +37,9 @@ const verifyRules = [
     .isIn(['Verified', 'Failed']).withMessage('status must be Verified or Failed.'),
 ];
 
-router.post('/submit',  authenticateToken,                submitRules, submit);
-router.get( '/mine',    authenticateToken,                              getMine);
-router.get( '/pending', authenticateToken, requireAdmin,                getPending);
-router.post('/verify',  authenticateToken, requireAdmin, verifyRules,   verify);
+router.post('/submit',  authenticateToken,                                                       submitRules, submit);
+router.get( '/mine',    authenticateToken,                                                                    getMine);
+router.get( '/pending', authenticateToken, loadCoordinatorScope, requireAdminOrCoordinator,                   getPending);
+router.post('/verify',  authenticateToken, loadCoordinatorScope, requireAdminOrCoordinator,      verifyRules, verify);
 
 module.exports = router;

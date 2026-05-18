@@ -9,6 +9,19 @@
 const { validationResult } = require('express-validator');
 const { sql, query } = require('../config/db');
 
+/**
+ * Build a safe SQL fragment that restricts to the caller's coordinator scope.
+ * Returns either an empty string (admin / no filter needed) or
+ * "AND <column> IN (1,2,3)" with integer-validated IDs.
+ */
+function scopeClause(req, column) {
+  if (req.user && req.user.isAdmin) return '';
+  const ids = (req.user && req.user.coordinatorPoolIDs) || [];
+  const safe = ids.map(n => parseInt(n, 10)).filter(n => Number.isInteger(n) && n > 0);
+  if (!safe.length) return ` AND 1 = 0`; // no scope → return zero rows
+  return ` AND ${column} IN (${safe.join(',')})`;
+}
+
 /* ══════════════════════════════════════════
    Configuration: Pool Sizes / Schedules / Amounts
    ══════════════════════════════════════════ */
@@ -122,6 +135,7 @@ async function listAllPools(req, res, next) {
        JOIN RotationSchedule   rs ON rs.RotationScheduleID = cp.RotationScheduleID
        JOIN ContributionAmount ca ON ca.ContributionAmountID = cp.ContributionAmountID
        LEFT JOIN Rotation       r ON r.PoolID = cp.PoolID
+       WHERE 1 = 1${scopeClause(req, 'cp.PoolID')}
        ORDER BY cp.CreatedAt DESC`
     );
     res.json({ pools: result.recordset });
@@ -141,6 +155,7 @@ async function listAllRotations(req, res, next) {
        JOIN ContributionPool   cp ON cp.PoolID = r.PoolID
        JOIN PoolSize           ps ON ps.PoolSizeID = cp.PoolSizeID
        JOIN ContributionAmount ca ON ca.ContributionAmountID = cp.ContributionAmountID
+       WHERE 1 = 1${scopeClause(req, 'r.PoolID')}
        ORDER BY r.CreatedAt DESC`
     );
     res.json({ rotations: result.recordset });

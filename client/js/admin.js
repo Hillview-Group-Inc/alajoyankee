@@ -10,14 +10,27 @@
   const fmtDate = (d) => d ? new Date(d).toLocaleDateString() : '—';
 
   let activated = false;
+  let isAdmin   = false;
 
   window.AdminPanel = {
     activate() {
       if (activated) return;
       activated = true;
+      const user = (window.Auth && Auth.getUser()) || {};
+      isAdmin = user.role === 'admin';
+
+      // Coordinator-only view: hide config tab + pane, retitle the header
+      if (!isAdmin) {
+        document.querySelectorAll('.admin-only-tab').forEach(el => el.style.display = 'none');
+        const title = document.getElementById('adminPanelTitle');
+        if (title) title.textContent = 'Coordinator Console';
+        const subtitle = document.getElementById('adminPanelSubtitle');
+        if (subtitle) subtitle.textContent = 'Monitor your assigned pools and verify payments.';
+      }
+
       bindTabs();
       loadPayments();
-      bindConfigForms();
+      if (isAdmin) bindConfigForms();
     },
   };
 
@@ -25,6 +38,7 @@
     document.querySelectorAll('.admin-tab').forEach(btn => {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
+        if (tab === 'config' && !isAdmin) return;
         document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         document.querySelectorAll('.admin-tab-pane').forEach(p => p.style.display = 'none');
@@ -34,7 +48,7 @@
         if (tab === 'payments')  loadPayments();
         if (tab === 'pools')     loadPools();
         if (tab === 'rotations') loadRotations();
-        if (tab === 'config')    loadConfig();
+        if (tab === 'config' && isAdmin) loadConfig();
       });
     });
   }

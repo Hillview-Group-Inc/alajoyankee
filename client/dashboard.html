@@ -216,8 +216,8 @@
     <!-- ADMIN PANEL -->
     <div id="panel-admin" style="display:none;">
       <div class="dashboard-header">
-        <h1>Admin Console</h1>
-        <p style="color:var(--color-text-muted);">Manage configurations, monitor pools, and verify payments.</p>
+        <h1 id="adminPanelTitle">Admin Console</h1>
+        <p id="adminPanelSubtitle" style="color:var(--color-text-muted);">Manage configurations, monitor pools, and verify payments.</p>
       </div>
 
       <!-- Tabs -->
@@ -225,7 +225,7 @@
         <button class="btn btn-outline btn-sm admin-tab active" data-tab="payments">Pending Payments</button>
         <button class="btn btn-outline btn-sm admin-tab"        data-tab="pools">All Pools</button>
         <button class="btn btn-outline btn-sm admin-tab"        data-tab="rotations">All Rotations</button>
-        <button class="btn btn-outline btn-sm admin-tab"        data-tab="config">Configuration</button>
+        <button class="btn btn-outline btn-sm admin-tab admin-only-tab" data-tab="config">Configuration</button>
       </div>
 
       <!-- Pending payments -->
@@ -253,7 +253,7 @@
       </div>
 
       <!-- Configuration -->
-      <div id="admin-config" class="admin-tab-pane" style="display:none;">
+      <div id="admin-config" class="admin-tab-pane admin-only-tab" style="display:none;">
         <div class="grid-2" style="gap:24px;">
           <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);">
             <h3 style="margin-bottom:12px;">Pool Sizes</h3>

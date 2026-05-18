@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Alajo Yankee is a community savings platform that modernizes West African Ajo/Susu/Tontine savings traditions for diaspora communities in the US. Members enroll in **contribution pools** with a fixed size, schedule, and amount; once a pool fills, a **rotation** is created with per-member due dates, and members take turns receiving the full pot. Payments are submitted by members and verified by admins.
+Alajo Yankee is a community savings platform that modernizes West African Ajo/Susu/Tontine savings traditions for diaspora communities in the US. Members enroll in **contribution pools** with a fixed size, schedule, and amount; once a pool fills, a **rotation** is created with per-member due dates, and members take turns receiving the full pot. Payments are submitted by members and verified by admins or coordinators (members granted pool-scoped admin rights).
 
 It is a full-stack web application with a vanilla JS frontend and a Node.js/Express backend backed by Microsoft SQL Server.
 
@@ -64,10 +64,11 @@ Browser → Express (app.js)
 
 **No ORM** — raw SQL with named parameterized queries through `mssql`. Add tables in `initDb.js` and run `npm run db:init`.
 
-### Database (13 tables)
+### Database (14 tables)
 
 **Identity / messaging**
 - `Users` — accounts; `Role` is `'member'` or `'admin'`; `IsActive` for soft-disable; tracks `Phone` and `LastLoginAt`
+- `CoordinatorAssignment` — `(UserID, PoolID)` junction granting admin-style rights scoped to specific pools. A coordinator is a `member`-role user with one or more rows here.
 - `ContactMessages` — public contact form
 - `RefreshTokens` — schema present, not yet used by app logic
 - `PasswordResetTokens` — SHA-256-hashed token, 30-min TTL, single-use
@@ -120,14 +121,14 @@ Browser → Express (app.js)
 | GET | `/api/rotations/history` | JWT | Caller's `completed` rotations |
 | POST | `/api/payments/submit` | JWT | Body `{ rotationDetailContributionID, amount }`. Server derives `MemberToBePaid` from the parent `RotationDetail.UserID`. |
 | GET | `/api/payments/mine` | JWT | Caller's payment history + verified/pending totals |
-| GET | `/api/payments/pending` | Admin | Payments awaiting verification |
-| POST | `/api/payments/verify` | Admin | Mark `Verified` or `Failed`; advances rotation status |
+| GET | `/api/payments/pending` | Admin / Coordinator | Pending payments (scoped to assigned pools for coordinators) |
+| POST | `/api/payments/verify` | Admin / Coordinator | Mark `Verified` or `Failed` (scoped to assigned pools for coordinators) |
 | GET | `/api/notifications/mine` | JWT | Caller's notifications (most recent first) |
 | GET | `/api/admin/config` | Admin | All lookup-table rows |
 | POST | `/api/admin/config/{pool-sizes,schedules,amounts}` | Admin | Add a lookup row |
 | PATCH | `/api/admin/config/{pool-sizes,schedules,amounts}/:id/active` | Admin | Toggle `IsActive` |
-| GET | `/api/admin/pools` | Admin | All pools |
-| GET | `/api/admin/rotations` | Admin | All rotations |
+| GET | `/api/admin/pools` | Admin / Coordinator | All pools (scoped to assigned pools for coordinators) |
+| GET | `/api/admin/rotations` | Admin / Coordinator | All rotations (scoped to assigned pools for coordinators) |
 | GET | `/health` | — | Server health check |
 
 ## Core business logic (PRD §4)
@@ -187,6 +188,7 @@ Always use `notifyUser({ user, subject, message })` (sends email + SMS in parall
 ## Conventions
 
 - Make **at least one admin** per environment by running `UPDATE Users SET Role = 'admin' WHERE Email = '<email>'` directly — there is no in-app role escalation.
+- Assign a **coordinator** by inserting into `CoordinatorAssignment` directly — there is no in-app coordinator assignment UI. A coordinator stays `Role='member'` but gains admin-style rights scoped to the assigned pool(s): they see only their pools, rotations, and pending payments in the admin console, and they can verify payments on rotations of those pools. They cannot edit lookup-table configuration. One user can coordinate many pools (one row per pool). Example: `INSERT INTO CoordinatorAssignment (UserID, PoolID) VALUES (42, 17);`. Scope is enforced server-side via `loadCoordinatorScope` + `requireAdminOrCoordinator` middleware.
 - New SQL queries must use named parameters (`@name`) and pass types via the `{ type: sql.X, value: … }` shape — never concatenate values into the SQL string.
 - All dates touched by the rotation engine are anchored at UTC midnight; do not introduce local-timezone Date arithmetic on them.
 - Public-facing error messages must not leak implementation details (e.g. forgot-password always returns the same generic 200 to prevent email enumeration).

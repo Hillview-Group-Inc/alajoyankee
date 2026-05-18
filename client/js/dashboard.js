@@ -59,8 +59,8 @@
     }
   }
 
-  // ── Reveal admin sidebar entry if user is admin ──
-  if (user && user.role === 'admin') {
+  // ── Reveal admin sidebar entry if user is admin or coordinator ──
+  if (user && (user.role === 'admin' || user.isCoordinator)) {
     document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
   }
 
