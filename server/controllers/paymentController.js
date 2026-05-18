@@ -10,6 +10,19 @@ const { sql, query, txQuery, withTransaction } = require('../config/db');
 const { notifyUser } = require('../services/notificationService');
 const { renderEmail, renderText, esc } = require('../services/emailTemplates');
 
+/**
+ * Build a safe SQL fragment that restricts to the caller's coordinator scope.
+ * Returns either an empty string (admin) or "AND <column> IN (1,2,3)".
+ * For coordinators with an empty scope, returns "AND 1 = 0" so they see nothing.
+ */
+function scopeClause(req, column) {
+  if (req.user && req.user.isAdmin) return '';
+  const ids = (req.user && req.user.coordinatorPoolIDs) || [];
+  const safe = ids.map(n => parseInt(n, 10)).filter(n => Number.isInteger(n) && n > 0);
+  if (!safe.length) return ` AND 1 = 0`;
+  return ` AND ${column} IN (${safe.join(',')})`;
+}
+
 /* ══════════════════════════════════════════
    POST /api/payments/submit
    Body: { rotationDetailContributionID, amount }
@@ -160,7 +173,7 @@ async function getPending(req, res, next) {
        JOIN PoolSize ps           ON ps.PoolSizeID = cp.PoolSizeID
        JOIN ContributionAmount ca ON ca.ContributionAmountID = cp.ContributionAmountID
        LEFT JOIN Users recipient  ON recipient.UserID = p.MemberToBePaid
-       WHERE p.Status = 'Pending'
+       WHERE p.Status = 'Pending'${scopeClause(req, 'r.PoolID')}
        ORDER BY p.PaymentDate ASC`
     );
     res.json({ payments: result.recordset });
@@ -187,6 +200,33 @@ async function verify(req, res, next) {
     // Run the verify + post-checks in a transaction so that a Verified payment
     // can immediately mark a rotation as completed if it was the last one.
     const result = await withTransaction(async (tx) => {
+      // 0. Scope check — coordinators can only verify payments on rotations
+      //    whose pool is in their assignment list. Admins skip this check.
+      if (!req.user.isAdmin) {
+        const ids = (req.user.coordinatorPoolIDs || [])
+          .map(n => parseInt(n, 10))
+          .filter(n => Number.isInteger(n) && n > 0);
+        if (!ids.length) {
+          const e = new Error('You are not a coordinator for this rotation.');
+          e.status = 403;
+          throw e;
+        }
+        const scopeCheck = await txQuery(
+          tx,
+          `SELECT 1 AS Ok
+             FROM Payments p
+             JOIN Rotation r ON r.RotationID = p.RotationID
+            WHERE p.PaymentID = @pID
+              AND r.PoolID IN (${ids.join(',')})`,
+          { pID: { type: sql.Int, value: paymentID } }
+        );
+        if (!scopeCheck.recordset.length) {
+          const e = new Error('You are not a coordinator for this rotation.');
+          e.status = 403;
+          throw e;
+        }
+      }
+
       // 1. Update the payment
       const upd = await txQuery(
         tx,

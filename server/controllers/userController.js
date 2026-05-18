@@ -24,6 +24,12 @@ async function getProfile(req, res, next) {
     }
 
     const u = result.recordset[0];
+
+    const coord = await query(
+      `SELECT TOP 1 1 AS Ok FROM CoordinatorAssignment WHERE UserID = @uid`,
+      { uid: { type: sql.Int, value: u.UserID } },
+    );
+
     res.json({
       user: {
         userID: u.UserID,
@@ -32,6 +38,7 @@ async function getProfile(req, res, next) {
         email: u.Email,
         phone: u.Phone,
         role: u.Role,
+        isCoordinator: coord.recordset.length > 0,
         lastLoginAt: u.LastLoginAt,
         createdAt: u.CreatedAt,
         updatedAt: u.UpdatedAt,

@@ -95,7 +95,7 @@ async function recordNotification({ userID, type, title, message, isSent, sentAt
  * @param {string} args.text    — plain-text body
  * @param {string} [args.html]  — optional HTML body
  */
-async function sendEmail({ userID, to, subject, text, html }) {
+async function sendEmail({ userID, to, subject, text, html, replyTo }) {
   const transport = getMailer();
   let isSent = false;
   let sentAt = null;
@@ -103,7 +103,9 @@ async function sendEmail({ userID, to, subject, text, html }) {
   if (transport && to) {
     try {
       const from = process.env.SMTP_FROM || `Alajo Yankee <${process.env.SMTP_USER}>`;
-      await transport.sendMail({ from, to, subject, text, html: html || text });
+      const mail = { from, to, subject, text, html: html || text };
+      if (replyTo) mail.replyTo = replyTo;
+      await transport.sendMail(mail);
       isSent = true;
       sentAt = new Date();
     } catch (err) {
@@ -114,7 +116,11 @@ async function sendEmail({ userID, to, subject, text, html }) {
     console.log(`\n[NOTIFICATIONS · EMAIL · STUB]\n  to:      ${to}\n  subject: ${subject}\n  body:    ${text}\n`);
   }
 
-  await recordNotification({ userID, type: 'Email', title: subject, message: text, isSent, sentAt });
+  // Skip DB persist for admin-bound emails that have no associated user account
+  // (e.g. contact-form notifications to the support inbox).
+  if (userID) {
+    await recordNotification({ userID, type: 'Email', title: subject, message: text, isSent, sentAt });
+  }
 }
 
 /**

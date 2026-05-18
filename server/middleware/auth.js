@@ -1,11 +1,12 @@
 /* ============================================
    server/middleware/auth.js
-   JWT verification middleware
+   JWT verification + role/scope middleware
    ============================================ */
 
 'use strict';
 
 const jwt = require('jsonwebtoken');
+const { sql, query } = require('../config/db');
 
 /**
  * Middleware: verify JWT from Authorization header.
@@ -42,4 +43,45 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-module.exports = { authenticateToken, requireAdmin };
+/**
+ * Middleware: load coordinator scope onto req.user.
+ *   - Admins: req.user.isAdmin = true, coordinatorPoolIDs = null (no filter applied downstream).
+ *   - Members: coordinatorPoolIDs is an array of PoolIDs they coordinate (possibly empty).
+ * Must be used AFTER authenticateToken.
+ */
+async function loadCoordinatorScope(req, res, next) {
+  try {
+    if (req.user && req.user.role === 'admin') {
+      req.user.isAdmin = true;
+      req.user.coordinatorPoolIDs = null;
+      return next();
+    }
+    const r = await query(
+      `SELECT PoolID FROM CoordinatorAssignment WHERE UserID = @uid`,
+      { uid: { type: sql.Int, value: req.user.userID } }
+    );
+    req.user.isAdmin = false;
+    req.user.coordinatorPoolIDs = r.recordset.map(x => x.PoolID);
+    next();
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Middleware: allow admin OR a coordinator with at least one assignment.
+ * Must be used AFTER loadCoordinatorScope.
+ */
+function requireAdminOrCoordinator(req, res, next) {
+  if (!req.user) return res.status(401).json({ message: 'Access denied.' });
+  if (req.user.isAdmin) return next();
+  if (Array.isArray(req.user.coordinatorPoolIDs) && req.user.coordinatorPoolIDs.length > 0) return next();
+  return res.status(403).json({ message: 'Access denied. Admin or coordinator privileges required.' });
+}
+
+module.exports = {
+  authenticateToken,
+  requireAdmin,
+  loadCoordinatorScope,
+  requireAdminOrCoordinator,
+};

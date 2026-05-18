@@ -257,6 +257,24 @@ IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_Payments_Recipie
   ALTER TABLE Payments ADD CONSTRAINT FK_Payments_Recipient FOREIGN KEY (MemberToBePaid) REFERENCES Users(UserID);
 
 -- ══════════════════════════════════════════
+-- CoordinatorAssignment — many-to-many (User, Pool)
+-- A coordinator is a member with admin-style rights scoped to specific pools.
+-- Assigned manually via direct SQL INSERT (same convention as admin Role).
+-- ══════════════════════════════════════════
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='CoordinatorAssignment' AND xtype='U')
+CREATE TABLE CoordinatorAssignment (
+  CoordinatorAssignmentID INT       IDENTITY(1,1) PRIMARY KEY,
+  UserID                  INT       NOT NULL,
+  PoolID                  INT       NOT NULL,
+  AssignedBy              INT       NULL,
+  AssignedAt              DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+  CONSTRAINT FK_CA_User       FOREIGN KEY (UserID)     REFERENCES Users(UserID),
+  CONSTRAINT FK_CA_Pool       FOREIGN KEY (PoolID)     REFERENCES ContributionPool(PoolID),
+  CONSTRAINT FK_CA_AssignedBy FOREIGN KEY (AssignedBy) REFERENCES Users(UserID),
+  CONSTRAINT UQ_CA_UserPool UNIQUE (UserID, PoolID)
+);
+
+-- ══════════════════════════════════════════
 -- PasswordResetTokens (table created now; routes wired in Phase 4)
 -- ══════════════════════════════════════════
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='PasswordResetTokens' AND xtype='U')
@@ -303,6 +321,12 @@ IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_Payments_Recipient' AND 
 
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_PRT_UserID' AND object_id = OBJECT_ID('PasswordResetTokens'))
   CREATE INDEX IX_PRT_UserID ON PasswordResetTokens(UserID);
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_CA_User' AND object_id = OBJECT_ID('CoordinatorAssignment'))
+  CREATE INDEX IX_CA_User ON CoordinatorAssignment(UserID);
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_CA_Pool' AND object_id = OBJECT_ID('CoordinatorAssignment'))
+  CREATE INDEX IX_CA_Pool ON CoordinatorAssignment(PoolID);
 `;
 
 // Idempotent seed data — only inserts if missing

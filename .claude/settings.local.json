@@ -9,7 +9,14 @@
       "Bash(node -e 'new Function\\(require\\('\\\\''fs'\\\\''\\).readFileSync\\('\\\\''__TRACKED_VAR__'\\\\'','\\\\''utf8'\\\\''\\)\\)')",
       "Bash(node -e ' *)",
       "Bash(PORT=4001 NODE_OPTIONS=\"--use-system-ca\" timeout 4 node server/app.js)",
-      "PowerShell(node --check \"server/app.js\"; \"EXIT: $LASTEXITCODE\")"
+      "PowerShell(node --check \"server/app.js\"; \"EXIT: $LASTEXITCODE\")",
+      "Bash(node --check server/middleware/auth.js)",
+      "Bash(node --check server/routes/admin.js)",
+      "Bash(node --check server/routes/payments.js)",
+      "Bash(node --check server/controllers/adminController.js)",
+      "Bash(node --check server/controllers/paymentController.js)",
+      "Bash(node --check server/controllers/contactController.js)",
+      "Bash(node --check server/services/notificationService.js)"
     ]
   }
 }

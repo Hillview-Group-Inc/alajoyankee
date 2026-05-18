@@ -33,7 +33,7 @@ function signToken(user) {
 }
 
 /* ── Helper: safe user object (no hash) ── */
-function safeUser(row) {
+function safeUser(row, extras = {}) {
   return {
     userID: row.UserID,
     firstName: row.FirstName,
@@ -42,7 +42,17 @@ function safeUser(row) {
     phone: row.Phone || null,
     role: row.Role,
     createdAt: row.CreatedAt,
+    isCoordinator: !!extras.isCoordinator,
   };
+}
+
+/* ── Helper: does this user coordinate at least one pool? ── */
+async function isCoordinator(userID) {
+  const r = await query(
+    `SELECT TOP 1 1 AS Ok FROM CoordinatorAssignment WHERE UserID = @uid`,
+    { uid: { type: sql.Int, value: userID } }
+  );
+  return r.recordset.length > 0;
 }
 
 /* ══════════════════════════════════════════
@@ -140,10 +150,11 @@ async function register(req, res, next) {
       );
     }
 
+    // New accounts can't have coordinator assignments yet — flag is always false.
     res.status(201).json({
       message: "Account created successfully.",
       token,
-      user: safeUser(newUser),
+      user: safeUser(newUser, { isCoordinator: false }),
     });
   } catch (err) {
     next(err);
@@ -199,11 +210,12 @@ async function login(req, res, next) {
     ).catch((err) => console.warn("LastLoginAt update failed:", err.message));
 
     const token = signToken(user);
+    const coordinator = await isCoordinator(user.UserID);
 
     res.json({
       message: "Signed in successfully.",
       token,
-      user: safeUser(user),
+      user: safeUser(user, { isCoordinator: coordinator }),
     });
   } catch (err) {
     next(err);
