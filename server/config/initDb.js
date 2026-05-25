@@ -336,6 +336,9 @@ IF NOT EXISTS (SELECT 1 FROM PoolSize WHERE PoolSizeValue = 2)
 
 IF NOT EXISTS (SELECT 1 FROM PoolSize WHERE PoolSizeValue = 3)
   INSERT INTO PoolSize (PoolSizeName, PoolSizeValue) VALUES (N'Midi Circle (3 members)', 3);
+
+IF NOT EXISTS (SELECT 1 FROM PoolSize WHERE PoolSizeValue = 4)
+  INSERT INTO PoolSize (PoolSizeName, PoolSizeValue) VALUES (N'Maxi Circle (4 members)', 4);
    
 IF NOT EXISTS (SELECT 1 FROM PoolSize WHERE PoolSizeValue = 5)
   INSERT INTO PoolSize (PoolSizeName, PoolSizeValue) VALUES (N'Small Circle (5 members)', 5);
