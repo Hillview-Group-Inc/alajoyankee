@@ -7,7 +7,8 @@
     "start": "node --use-system-ca server/app.js",
     "dev": "nodemon --exec \"node --use-system-ca\" server/app.js",
     "db:init": "node --use-system-ca server/config/initDb.js",
-    "db:wipe-runtime": "node --use-system-ca server/config/wipeRuntime.js"
+    "db:wipe-runtime": "node --use-system-ca server/config/wipeRuntime.js",
+    "reminders:run": "node --use-system-ca server/scripts/runReminders.js"
   },
   "engines": {
     "node": ">=18.0.0"

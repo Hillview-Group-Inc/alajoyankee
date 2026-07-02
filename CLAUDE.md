@@ -16,6 +16,7 @@ npm run dev              # Start development server with nodemon (auto-reload)
 npm start                # Start production server
 npm run db:init          # Create / migrate database schema (idempotent, safe to re-run)
 npm run db:wipe-runtime  # ⚠️ DESTRUCTIVE — wipe pool/rotation/payment tables (keeps users + lookups)
+npm run reminders:run    # Run the contribution due-date reminder job once (3-day + day-of), then exit
 ```
 
 All scripts pass `--use-system-ca` so Node trusts the OS certificate store (needed when the local network does TLS interception of outbound SMTP/HTTPS).
@@ -59,12 +60,14 @@ Browser → Express (app.js)
 | `middleware/errorHandler.js` | Global error handler; suppresses stack traces in production; maps SQL `2627`/`2601` (duplicate key) → 409 |
 | `services/rotationEngine.js` | Pure date math (next Monday, etc.) + `createRotationForPool(tx, …)` to seed `Rotation` + `RotationDetail` rows |
 | `services/notificationService.js` | `sendEmail`, `sendSMS`, `notifyUser`. Lazy-loads `nodemailer`/`twilio`; falls back to console + DB-row stub if either is unavailable |
+| `services/reminderService.js` | `sendDueReminders()` — builds + dispatches the 3-day-before and day-of contribution reminders for open rotations. Idempotent via the `ContributionReminder` claim table; skips members who already logged a payment |
+| `services/reminderScheduler.js` | In-process self-arming daily timer (`REMINDER_HOUR_UTC`, default 13:00 UTC) that runs `sendDueReminders()`. `start()` is called from `app.js`; disable with `REMINDERS_DISABLED=true`. Same job also runs via `npm run reminders:run` |
 | `controllers/` | One file per resource (`auth`, `user`, `contact`, `pool`, `rotation`, `payment`, `notification`, `admin`) |
 | `routes/` | Thin route definitions with express-validator rules |
 
 **No ORM** — raw SQL with named parameterized queries through `mssql`. Add tables in `initDb.js` and run `npm run db:init`.
 
-### Database (14 tables)
+### Database (15 tables)
 
 **Identity / messaging**
 - `Users` — accounts; `Role` is `'member'` or `'admin'`; `IsActive` for soft-disable; tracks `Phone` and `LastLoginAt`
@@ -88,6 +91,7 @@ Browser → Express (app.js)
 **Payments + notifications**
 - `Payments` — `(RotationID, UserID, MemberToBePaid, Amount, Status)`. `UserID` = payer, `MemberToBePaid` = recipient (the rank-K member collecting on this date). `Status ∈ {Pending, Verified, Failed}`. Natural key: `(RotationID, UserID, MemberToBePaid)`.
 - `Notifications` — `Type ∈ {Email, SMS}`; `IsSent` + `SentAt` track delivery vs. stub
+- `ContributionReminder` — idempotency ledger for due-date reminders. One row per `(RotationDetailContributionID, ReminderType ∈ {'3day','dueday'})` with `UNIQUE(RotationDetailContributionID, ReminderType)`. The daily job "claims" a reminder with an INSERT (duplicate key ⇒ already sent), giving at-most-once delivery across restarts / repeat runs.
 
 ### Frontend (`client/`)
 
@@ -174,6 +178,8 @@ Trigger points already wired:
 | Payment verified / failed | `paymentController.verify` post-commit |
 | Rotation completed | `paymentController.verify` post-commit, when last verified payment lands |
 | Password reset | `authController.forgotPassword` |
+| Contribution due in 3 days | `reminderService.sendDueReminders` (daily job) — per member, per upcoming due date |
+| Contribution due today | `reminderService.sendDueReminders` (daily job) — per member, on the due date |
 
 Always use `notifyUser({ user, subject, message })` (sends email + SMS in parallel via `Promise.allSettled`) or the lower-level `sendEmail`/`sendSMS`. Notifications are **always fire-and-forget from the request thread** — never `await` them in a request handler; failures are logged, and a `Notifications` row is persisted with `IsSent=0` for retry/audit.
 

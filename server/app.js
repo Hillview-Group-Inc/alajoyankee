@@ -23,6 +23,7 @@ const paymentRoutes  = require('./routes/payments');
 const adminRoutes        = require('./routes/admin');
 const notificationRoutes = require('./routes/notifications');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
+const reminderScheduler  = require('./services/reminderScheduler');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -174,6 +175,9 @@ app.listen(PORT, () => {
 ║  🗄️   DB:         SQL Server              ║
 ╚═══════════════════════════════════════════╝
   `);
+
+  // Start the daily contribution-reminder job (3-days-before + day-of).
+  reminderScheduler.start();
 });
 
 module.exports = app;

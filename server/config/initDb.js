@@ -290,6 +290,25 @@ CREATE TABLE PasswordResetTokens (
 );
 
 -- ══════════════════════════════════════════
+-- ContributionReminder — idempotency ledger for due-date reminders
+-- One row per (contribution × reminder type) once that reminder has been
+-- dispatched. The UNIQUE constraint lets the daily job "claim" a reminder
+-- with an INSERT and treat a duplicate-key as "already sent", so restarts
+-- or repeated runs on the same day never double-notify a member.
+-- ══════════════════════════════════════════
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ContributionReminder' AND xtype='U')
+CREATE TABLE ContributionReminder (
+  ContributionReminderID       INT            IDENTITY(1,1) PRIMARY KEY,
+  RotationDetailContributionID INT            NOT NULL,
+  ReminderType                 NVARCHAR(10)   NOT NULL,  -- '3day' | 'dueday'
+  SentAt                       DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
+  CONSTRAINT FK_CR_RDC FOREIGN KEY (RotationDetailContributionID)
+    REFERENCES RotationDetailContribution(RotationDetailContributionID),
+  CONSTRAINT CK_CR_Type CHECK (ReminderType IN ('3day','dueday')),
+  CONSTRAINT UQ_CR_ContribType UNIQUE (RotationDetailContributionID, ReminderType)
+);
+
+-- ══════════════════════════════════════════
 -- Indexes
 -- ══════════════════════════════════════════
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_Users_Email' AND object_id = OBJECT_ID('Users'))
@@ -382,7 +401,9 @@ async function initDb() {
     const allSql = SCHEMA + "\n" + SEED;
     const statements = allSql
       .split(/;\s*\n/)
-      .map((s) => s.trim())
+      // Strip any leading full-line comments so a comment header before a
+      // statement doesn't cause the whole (idempotent) statement to be skipped.
+      .map((s) => s.replace(/^(?:\s*--[^\n]*\n)+/, "").trim())
       .filter((s) => s.length > 10 && !s.startsWith("--"));
 
     for (const stmt of statements) {

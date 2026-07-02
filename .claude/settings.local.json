@@ -16,7 +16,11 @@
       "Bash(node --check server/controllers/adminController.js)",
       "Bash(node --check server/controllers/paymentController.js)",
       "Bash(node --check server/controllers/contactController.js)",
-      "Bash(node --check server/services/notificationService.js)"
+      "Bash(node --check server/services/notificationService.js)",
+      "Bash(node --check server/services/reminderService.js)",
+      "Bash(node --check server/services/reminderScheduler.js)",
+      "Bash(node --check server/scripts/runReminders.js)",
+      "Bash(node --check server/app.js)"
     ]
   }
 }
