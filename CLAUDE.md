@@ -37,6 +37,20 @@ Copy `.env.example` to `.env` and fill in values before running.
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — Nodemailer email transport
 - `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM` — Twilio SMS
 - `PUBLIC_URL` — base URL used to build password-reset links in emails
+- `REMINDER_HOUR_UTC` — hour (0–23 UTC) the in-process reminder scheduler fires (default 13)
+- `REMINDERS_DISABLED=true` — turn the in-process scheduler off (e.g. when an external cron owns it)
+- `REMINDER_TRIGGER_SECRET` — shared secret guarding `POST /api/reminders/run`. Unset ⇒ the endpoint returns 503 (disabled). Must match the secret held by the external scheduler.
+
+## Deployment (Azure App Service + GitHub Actions)
+
+Deploys run via `.github/workflows/azure-webapps-node.yml` (build + `azure/webapps-deploy`) on every push to `main`. Runtime config (`SMTP_*`, `DB_*`, `JWT_SECRET`, `REMINDER_TRIGGER_SECRET`, …) lives in **Azure → App Service → Configuration → Application settings**, NOT in the repo — `.env` is local-only and not deployed.
+
+**Reminder job on Azure** — the in-process scheduler (`reminderScheduler.js`) is an `unref`'d daily `setTimeout`, so it only fires if the worker is resident at `REMINDER_HOUR_UTC`. Azure unloads idle workers unless **Always On** is enabled (Basic tier or higher). Two mechanisms keep reminders reliable, and they coexist safely (the job is idempotent via the `ContributionReminder` ledger, so double-firing never double-sends):
+
+1. **Always On** keeps the worker warm so the in-process timer survives to fire.
+2. **`.github/workflows/reminders.yml`** — a scheduled GitHub Actions cron (13:00 UTC daily + manual `workflow_dispatch`) that `curl`s `POST {APP_BASE_URL}/api/reminders/run` with the `x-reminder-secret` header. This is the reliable trigger and needs neither Always On nor a warm worker (the request itself wakes the app).
+
+GitHub-side config for the reminder workflow: repo **secret** `REMINDER_TRIGGER_SECRET` (same value as the Azure App Setting) and optional repo **variable** `APP_BASE_URL` (defaults to `https://alajoyankee.azurewebsites.net`; set to `https://alajoyankee.com` for the custom domain — use the hostname that responds 200 directly, not one that 301-redirects, since redirects can drop the POST body/header). GitHub cron is best-effort (can be delayed/skipped), so keeping the in-process scheduler on as a backstop is recommended over setting `REMINDERS_DISABLED=true`.
 
 ## Architecture
 
@@ -62,7 +76,8 @@ Browser → Express (app.js)
 | `services/notificationService.js` | `sendEmail`, `sendSMS`, `notifyUser`. Lazy-loads `nodemailer`/`twilio`; falls back to console + DB-row stub if either is unavailable |
 | `services/reminderService.js` | `sendDueReminders()` — builds + dispatches the 3-day-before and day-of contribution reminders for open rotations. Idempotent via the `ContributionReminder` claim table; skips members who already logged a payment |
 | `services/reminderScheduler.js` | In-process self-arming daily timer (`REMINDER_HOUR_UTC`, default 13:00 UTC) that runs `sendDueReminders()`. `start()` is called from `app.js`; disable with `REMINDERS_DISABLED=true`. Same job also runs via `npm run reminders:run` |
-| `controllers/` | One file per resource (`auth`, `user`, `contact`, `pool`, `rotation`, `payment`, `notification`, `admin`) |
+| `controllers/reminderController.js` | HTTP trigger for `sendDueReminders()`: `requireReminderSecret` (constant-time shared-secret guard, no JWT — fails closed to 503/401) + `runReminders` (awaits the job, returns its summary). Lets an external scheduler drive the reminder job over HTTP |
+| `controllers/` | One file per resource (`auth`, `user`, `contact`, `pool`, `rotation`, `payment`, `notification`, `admin`, `reminder`) |
 | `routes/` | Thin route definitions with express-validator rules |
 
 **No ORM** — raw SQL with named parameterized queries through `mssql`. Add tables in `initDb.js` and run `npm run db:init`.
@@ -133,6 +148,7 @@ Browser → Express (app.js)
 | PATCH | `/api/admin/config/{pool-sizes,schedules,amounts}/:id/active` | Admin | Toggle `IsActive` |
 | GET | `/api/admin/pools` | Admin / Coordinator | All pools (scoped to assigned pools for coordinators) |
 | GET | `/api/admin/rotations` | Admin / Coordinator | All rotations (scoped to assigned pools for coordinators) |
+| POST | `/api/reminders/run` | Secret | Fire the due-date reminder job. Guarded by `REMINDER_TRIGGER_SECRET` (via `x-reminder-secret` header or `Authorization: Bearer`), not JWT. Called by the GitHub Actions cron |
 | GET | `/health` | — | Server health check |
 
 ## Core business logic (PRD §4)
@@ -180,6 +196,8 @@ Trigger points already wired:
 | Password reset | `authController.forgotPassword` |
 | Contribution due in 3 days | `reminderService.sendDueReminders` (daily job) — per member, per upcoming due date |
 | Contribution due today | `reminderService.sendDueReminders` (daily job) — per member, on the due date |
+
+The daily reminder job is driven by two coexisting mechanisms — the in-process `reminderScheduler` timer and the `POST /api/reminders/run` HTTP trigger (fired by the GitHub Actions cron). Both call the same idempotent `sendDueReminders`, so running both never double-sends. See **Deployment** above.
 
 Always use `notifyUser({ user, subject, message })` (sends email + SMS in parallel via `Promise.allSettled`) or the lower-level `sendEmail`/`sendSMS`. Notifications are **always fire-and-forget from the request thread** — never `await` them in a request handler; failures are logged, and a `Notifications` row is persisted with `IsSent=0` for retry/audit.
 
