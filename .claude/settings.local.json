@@ -20,7 +20,8 @@
       "Bash(node --check server/services/reminderService.js)",
       "Bash(node --check server/services/reminderScheduler.js)",
       "Bash(node --check server/scripts/runReminders.js)",
-      "Bash(node --check server/app.js)"
+      "Bash(node --check server/app.js)",
+      "Bash(node -e \"require\\('./server/routes/reminders'\\); const c=require\\('./server/controllers/reminderController'\\); console.log\\('routes+controller OK; exports:', Object.keys\\(c\\).join\\(', '\\)\\);\")"
     ]
   }
 }

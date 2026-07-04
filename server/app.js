@@ -22,6 +22,7 @@ const rotationRoutes = require('./routes/rotations');
 const paymentRoutes  = require('./routes/payments');
 const adminRoutes        = require('./routes/admin');
 const notificationRoutes = require('./routes/notifications');
+const reminderRoutes     = require('./routes/reminders');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 const reminderScheduler  = require('./services/reminderScheduler');
 
@@ -137,6 +138,7 @@ app.use('/api/rotations', rotationRoutes);
 app.use('/api/payments',  paymentRoutes);
 app.use('/api/admin',         adminRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/reminders',     reminderRoutes);
 
 /* ════════════════════════════════════════════
    SERVE STATIC FRONTEND

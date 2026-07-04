@@ -1,0 +1,52 @@
+# Daily trigger for the contribution due-date reminder job.
+#
+# Fires POST /api/reminders/run on the deployed Azure Web App so the reminders
+# are driven by an external scheduler instead of (or in addition to) the
+# in-process timer. The job is idempotent, so running it alongside the
+# in-process scheduler never double-sends.
+#
+# Setup (one time):
+#   1. Add a repository secret REMINDER_TRIGGER_SECRET with a long random value,
+#      and set the SAME value as an Azure App Setting named REMINDER_TRIGGER_SECRET.
+#   2. (Optional) Add a repository variable APP_BASE_URL if your app isn't at
+#      https://alajoyankee.azurewebsites.net (e.g. a custom domain).
+#
+# Note: GitHub's scheduled runs are best-effort and can be delayed (occasionally
+# by up to ~an hour) or skipped under high load. For a daily reminder that's
+# fine; keeping the in-process scheduler on (REMINDERS_DISABLED unset/false)
+# acts as a backstop, and idempotency prevents duplicates.
+
+name: Contribution reminders
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # 13:00 UTC daily (~8am US Eastern)
+  workflow_dispatch:        # allow manual runs from the Actions tab
+
+permissions:
+  contents: read
+
+jobs:
+  fire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger reminder job
+        env:
+          BASE_URL: ${{ vars.APP_BASE_URL || 'https://alajoyankee.azurewebsites.net' }}
+          SECRET:   ${{ secrets.REMINDER_TRIGGER_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SECRET}" ]; then
+            echo "::error::REMINDER_TRIGGER_SECRET secret is not set in this repository."
+            exit 1
+          fi
+          code=$(curl -sS --max-time 120 -o /tmp/body.txt -w '%{http_code}' \
+            -X POST "${BASE_URL%/}/api/reminders/run" \
+            -H "x-reminder-secret: ${SECRET}")
+          echo "HTTP ${code}"
+          cat /tmp/body.txt || true
+          echo
+          if [ "${code}" != "200" ]; then
+            echo "::error::Reminder trigger failed with HTTP ${code}."
+            exit 1
+          fi
